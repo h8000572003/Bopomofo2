@@ -1,4 +1,4 @@
-// 台灣繁體主題式單字與句子完整資料庫 (100% 純台灣注音符號標音，絕非中國拼音)
+// 台灣繁體主題式單字與句子完整資料庫 (100+ 筆單字題庫，100% 純台灣標準注音符號標音)
 
 export const TOPICS = [
   {
@@ -157,6 +157,30 @@ export const TOPICS = [
           { char: '鳥', bopomofo: 'ㄋㄧㄠˇ', initial: 'ㄋ', medial: 'ㄧ', final: 'ㄠ', tone: 'ˇ', toneMark: 'ˇ' }
         ],
         exampleSentence: '枝頭上的小鳥唱著動聽的歌。'
+      },
+      {
+        id: 'w_zebra',
+        hanzi: '斑馬',
+        emoji: '🦓',
+        bpmfFull: 'ㄅㄢ ㄇㄚˇ',
+        meaning: '身穿黑白條紋外衣、奔馳在草原上的馬兒',
+        characters: [
+          { char: '斑', bopomofo: 'ㄅㄢ', initial: 'ㄅ', medial: '', final: 'ㄢ', tone: '', toneMark: '' },
+          { char: '馬', bopomofo: 'ㄇㄚˇ', initial: 'ㄇ', medial: '', final: 'ㄚ', tone: 'ˇ', toneMark: 'ˇ' }
+        ],
+        exampleSentence: '斑馬在遼闊的草原上奔跑。'
+      },
+      {
+        id: 'w_squirrel',
+        hanzi: '松鼠',
+        emoji: '🐿️',
+        bpmfFull: 'ㄙㄨㄥ ㄕㄨˇ',
+        meaning: '有著蓬鬆大尾巴、最喜歡吃堅果的小動物',
+        characters: [
+          { char: '松', bopomofo: 'ㄙㄨㄥ', initial: 'ㄙ', medial: '', final: 'ㄨㄥ', tone: '', toneMark: '' },
+          { char: '鼠', bopomofo: 'ㄕㄨˇ', initial: 'ㄕ', medial: '', final: 'ㄨ', tone: 'ˇ', toneMark: 'ˇ' }
+        ],
+        exampleSentence: '小松鼠捧著松果開心地啃著。'
       }
     ],
     sentences: [
@@ -196,54 +220,12 @@ export const TOPICS = [
           { char: '巴', bopomofo: '˙ㄅㄚ' },
           { char: '。', bopomofo: '' }
         ]
-      },
-      {
-        id: 's_elephant_1',
-        text: '大象用長長的鼻子噴水洗澡。',
-        emoji: '🐘💦',
-        tokens: [
-          { char: '大', bopomofo: 'ㄉㄚˋ' },
-          { char: '象', bopomofo: 'ㄒㄧㄤˋ' },
-          { char: '用', bopomofo: 'ㄩㄥˋ' },
-          { char: '長', bopomofo: 'ㄔㄤˊ' },
-          { char: '長', bopomofo: 'ㄔㄤˊ' },
-          { char: '的', bopomofo: '˙ㄉㄜ' },
-          { char: '鼻', bopomofo: 'ㄅㄧˊ' },
-          { char: '子', bopomofo: '˙ㄗ' },
-          { char: '噴', bopomofo: 'ㄆㄣ' },
-          { char: '水', bopomofo: 'ㄕㄨㄟˇ' },
-          { char: '洗', bopomofo: 'ㄒㄧˇ' },
-          { char: '澡', bopomofo: 'ㄗㄠˇ' },
-          { char: '。', bopomofo: '' }
-        ]
-      },
-      {
-        id: 's_bird_1',
-        text: '樹上的小鳥唱出清脆動聽的歌曲。',
-        emoji: '🐦🎵',
-        tokens: [
-          { char: '樹', bopomofo: 'ㄕㄨˋ' },
-          { char: '上', bopomofo: 'ㄕㄤˋ' },
-          { char: '的', bopomofo: '˙ㄉㄜ' },
-          { char: '小', bopomofo: 'ㄒㄧㄠˇ' },
-          { char: '鳥', bopomofo: 'ㄋㄧㄠˇ' },
-          { char: '唱', bopomofo: 'ㄔㄤˋ' },
-          { char: '出', bopomofo: 'ㄔㄨ' },
-          { char: '清', bopomofo: 'ㄑㄧㄥ' },
-          { char: '脆', bopomofo: 'ㄘㄨㄟˋ' },
-          { char: '動', bopomofo: 'ㄉㄨㄥˋ' },
-          { char: '聽', bopomofo: 'ㄊㄧㄥ' },
-          { char: '的', bopomofo: '˙ㄉㄜ' },
-          { char: '歌', bopomofo: 'ㄍㄜ' },
-          { char: '曲', bopomofo: 'ㄑㄩˇ' },
-          { char: '。', bopomofo: '' }
-        ]
       }
     ]
   },
   {
     id: 'food',
-    name: '美味食物',
+    name: '美味食物與水果',
     icon: '🍎',
     badgeIcon: '🍰',
     color: 'from-rose-400 to-red-500',
@@ -397,6 +379,30 @@ export const TOPICS = [
           { char: '子', bopomofo: '˙ㄗ', initial: 'ㄗ', medial: '', final: '', tone: '˙', toneMark: '˙' }
         ],
         exampleSentence: '多汁的橘子酸甜可口。'
+      },
+      {
+        id: 'w_cherry',
+        hanzi: '櫻桃',
+        emoji: '🍒',
+        bpmfFull: 'ㄧㄥ ㄊㄠˊ',
+        meaning: '小巧玲瓏、紅寶石般酸甜的水果',
+        characters: [
+          { char: '櫻', bopomofo: 'ㄧㄥ', initial: '', medial: 'ㄧ', final: 'ㄥ', tone: '', toneMark: '' },
+          { char: '桃', bopomofo: 'ㄊㄠˊ', initial: 'ㄊ', medial: '', final: 'ㄠ', tone: 'ˊ', toneMark: 'ˊ' }
+        ],
+        exampleSentence: '小櫻桃掛在枝頭上像紅色寶石。'
+      },
+      {
+        id: 'w_pancake',
+        hanzi: '鬆餅',
+        emoji: '🥞',
+        bpmfFull: 'ㄙㄨㄥ ㄅㄧㄥˇ',
+        meaning: '淋上甜蜜蜂蜜與奶油的熱騰騰點心',
+        characters: [
+          { char: '鬆', bopomofo: 'ㄙㄨㄥ', initial: 'ㄙ', medial: '', final: 'ㄨㄥ', tone: '', toneMark: '' },
+          { char: '餅', bopomofo: 'ㄅㄧㄥˇ', initial: 'ㄅ', medial: 'ㄧ', final: 'ㄥ', tone: 'ˇ', toneMark: 'ˇ' }
+        ],
+        exampleSentence: '美味的鬆餅淋上香甜蜂蜜。'
       }
     ],
     sentences: [
@@ -417,48 +423,6 @@ export const TOPICS = [
           { char: '香', bopomofo: 'ㄒㄧㄤ' },
           { char: '又', bopomofo: 'ㄧㄡˋ' },
           { char: '甜', bopomofo: 'ㄊㄧㄢˊ' },
-          { char: '。', bopomofo: '' }
-        ]
-      },
-      {
-        id: 's_food_2',
-        text: '今天早餐我喝了一杯熱牛奶。',
-        emoji: '🥛🥪',
-        tokens: [
-          { char: '今', bopomofo: 'ㄐㄧㄣ' },
-          { char: '天', bopomofo: 'ㄊㄧㄢ' },
-          { char: '早', bopomofo: 'ㄗㄠˇ' },
-          { char: '餐', bopomofo: 'ㄘㄢ' },
-          { char: '我', bopomofo: 'ㄨㄛˇ' },
-          { char: '喝', bopomofo: 'ㄏㄜ' },
-          { char: '了', bopomofo: '˙ㄌㄜ' },
-          { char: '一', bopomofo: 'ㄧˋ' },
-          { char: '杯', bopomofo: 'ㄅㄟ' },
-          { char: '熱', bopomofo: 'ㄖㄜˋ' },
-          { char: '牛', bopomofo: 'ㄋㄧㄡˊ' },
-          { char: '奶', bopomofo: 'ㄋㄞˇ' },
-          { char: '。', bopomofo: '' }
-        ]
-      },
-      {
-        id: 's_food_3',
-        text: '夏天吃冰涼的西瓜和草莓冰淇淋。',
-        emoji: '🍉🍦',
-        tokens: [
-          { char: '夏', bopomofo: 'ㄒㄧㄚˋ' },
-          { char: '天', bopomofo: 'ㄊㄧㄢ' },
-          { char: '吃', bopomofo: 'ㄔ' },
-          { char: '冰', bopomofo: 'ㄅㄧㄥ' },
-          { char: '涼', bopomofo: 'ㄌㄧㄤˊ' },
-          { char: '的', bopomofo: '˙ㄉㄜ' },
-          { char: '西', bopomofo: 'ㄒㄧ' },
-          { char: '瓜', bopomofo: 'ㄍㄨㄚ' },
-          { char: '和', bopomofo: 'ㄏㄢˋ' },
-          { char: '草', bopomofo: 'ㄘㄠˇ' },
-          { char: '莓', bopomofo: 'ㄇㄟˊ' },
-          { char: '冰', bopomofo: 'ㄅㄧㄥ' },
-          { char: '淇', bopomofo: 'ㄑㄧˊ' },
-          { char: '淋', bopomofo: 'ㄌㄧㄣˊ' },
           { char: '。', bopomofo: '' }
         ]
       }
@@ -594,6 +558,54 @@ export const TOPICS = [
           { char: '洋', bopomofo: 'ㄧㄤˊ', initial: '', medial: 'ㄧ', final: 'ㄤ', tone: 'ˊ', toneMark: 'ˊ' }
         ],
         exampleSentence: '遼闊的海洋裡住著很多小魚。'
+      },
+      {
+        id: 'w_mountain',
+        hanzi: '山峰',
+        emoji: '⛰️',
+        bpmfFull: 'ㄕㄢ ㄈㄥ',
+        meaning: '高聳入雲、青翠美麗的大山',
+        characters: [
+          { char: '山', bopomofo: 'ㄕㄢ', initial: 'ㄕ', medial: '', final: 'ㄢ', tone: '', toneMark: '' },
+          { char: '峰', bopomofo: 'ㄈㄥ', initial: 'ㄈ', medial: '', final: 'ㄥ', tone: '', toneMark: '' }
+        ],
+        exampleSentence: '巍峨的山峰籠罩在白雲中。'
+      },
+      {
+        id: 'w_breeze',
+        hanzi: '微風',
+        emoji: '🍃',
+        bpmfFull: 'ㄨㄟ ㄈㄥ',
+        meaning: '輕輕吹拂臉龐、舒適涼爽的清風',
+        characters: [
+          { char: '微', bopomofo: 'ㄨㄟ', initial: '', medial: 'ㄨ', final: 'ㄟ', tone: '', toneMark: '' },
+          { char: '風', bopomofo: 'ㄈㄥ', initial: 'ㄈ', medial: '', final: 'ㄥ', tone: '', toneMark: '' }
+        ],
+        exampleSentence: '陣陣微風吹拂著綠色小草。'
+      },
+      {
+        id: 'w_thunder',
+        hanzi: '雷電',
+        emoji: '⚡',
+        bpmfFull: 'ㄌㄟˊ ㄉㄧㄢˋ',
+        meaning: '暴風雨中空中劃過的閃亮閃電與隆隆巨響',
+        characters: [
+          { char: '雷', bopomofo: 'ㄌㄟˊ', initial: 'ㄌ', medial: '', final: 'ㄟ', tone: 'ˊ', toneMark: 'ˊ' },
+          { char: '電', bopomofo: 'ㄉㄧㄢˋ', initial: 'ㄉ', medial: 'ㄧ', final: 'ㄢ', tone: 'ˋ', toneMark: 'ˋ' }
+        ],
+        exampleSentence: '天空閃過金黃色的雷電。'
+      },
+      {
+        id: 'w_dew',
+        hanzi: '露水',
+        emoji: '💧',
+        bpmfFull: 'ㄌㄡˋ ㄕㄨㄟˇ',
+        meaning: '清晨凝聚在花草葉片上的晶瑩小水滴',
+        characters: [
+          { char: '露', bopomofo: 'ㄌㄡˋ', initial: 'ㄌ', medial: '', final: 'ㄡ', tone: 'ˋ', toneMark: 'ˋ' },
+          { char: '水', bopomofo: 'ㄕㄨㄟˇ', initial: 'ㄕ', medial: 'ㄨ', final: 'ㄟ', tone: 'ˇ', toneMark: 'ˇ' }
+        ],
+        exampleSentence: '晶瑩的露水在荷葉上滾動。'
       }
     ],
     sentences: [
@@ -614,55 +626,6 @@ export const TOPICS = [
           { char: '的', bopomofo: '˙ㄉㄜ' },
           { char: '笑', bopomofo: 'ㄒㄧㄠˋ' },
           { char: '容', bopomofo: 'ㄖㄨㄥˊ' },
-          { char: '。', bopomofo: '' }
-        ]
-      },
-      {
-        id: 's_nature_2',
-        text: '下雨過後，天空掛著漂亮的七色彩虹。',
-        emoji: '🌈✨',
-        tokens: [
-          { char: '下', bopomofo: 'ㄒㄧㄚˋ' },
-          { char: '雨', bopomofo: 'ㄩˇ' },
-          { char: '過', bopomofo: 'ㄍㄨㄛˋ' },
-          { char: '後', bopomofo: 'ㄏㄡˋ' },
-          { char: '，', bopomofo: '' },
-          { char: '天', bopomofo: 'ㄊㄧㄢ' },
-          { char: '空', bopomofo: 'ㄎㄨㄥ' },
-          { char: '掛', bopomofo: 'ㄍㄨㄚˋ' },
-          { char: '著', bopomofo: '˙ㄓㄜ' },
-          { char: '漂', bopomofo: 'ㄆㄧㄠˋ' },
-          { char: '亮', bopomofo: '˙ㄌㄧㄤ' },
-          { char: '的', bopomofo: '˙ㄉㄜ' },
-          { char: '七', bopomofo: 'ㄑㄧ' },
-          { char: '色', bopomofo: 'ㄙㄜˋ' },
-          { char: '彩', bopomofo: 'ㄘㄞˇ' },
-          { char: '虹', bopomofo: 'ㄏㄨㄥˊ' },
-          { char: '。', bopomofo: '' }
-        ]
-      },
-      {
-        id: 's_nature_3',
-        text: '夜晚的微風輕輕吹，滿天星星一閃一閃。',
-        emoji: '🌙⭐',
-        tokens: [
-          { char: '夜', bopomofo: 'ㄧㄝˋ' },
-          { char: '晚', bopomofo: 'ㄨㄢˇ' },
-          { char: '的', bopomofo: '˙ㄉㄜ' },
-          { char: '微', bopomofo: 'ㄨㄟ' },
-          { char: '風', bopomofo: 'ㄈㄥ' },
-          { char: '輕', bopomofo: 'ㄑㄧㄥ' },
-          { char: '輕', bopomofo: 'ㄑㄧㄥ' },
-          { char: '吹', bopomofo: 'ㄔㄨㄟ' },
-          { char: '，', bopomofo: '' },
-          { char: '滿', bopomofo: 'ㄇㄢˇ' },
-          { char: '天', bopomofo: 'ㄊㄧㄢ' },
-          { char: '星', bopomofo: 'ㄒㄧㄥ' },
-          { char: '星', bopomofo: '˙ㄒㄧㄥ' },
-          { char: '一', bopomofo: 'ㄧˋ' },
-          { char: '閃', bopomofo: 'ㄕㄢˇ' },
-          { char: '一', bopomofo: 'ㄧˋ' },
-          { char: '閃', bopomofo: 'ㄕㄢˇ' },
           { char: '。', bopomofo: '' }
         ]
       }
@@ -776,6 +739,69 @@ export const TOPICS = [
           { char: '箭', bopomofo: 'ㄐㄧㄢˋ', initial: 'ㄐ', medial: 'ㄧ', final: 'ㄢ', tone: 'ˋ', toneMark: 'ˋ' }
         ],
         exampleSentence: '火箭點火倒數，咻一聲飛向太空！'
+      },
+      {
+        id: 'w_helicopter',
+        hanzi: '直升機',
+        emoji: '🚁',
+        bpmfFull: 'ㄓˊ ㄕㄥ ㄐㄧ',
+        meaning: '頂部有巨大旋轉槳葉、能垂直升降的飛行器',
+        characters: [
+          { char: '直', bopomofo: 'ㄓˊ', initial: 'ㄓ', medial: '', final: '', tone: 'ˊ', toneMark: 'ˊ' },
+          { char: '升', bopomofo: 'ㄕㄥ', initial: 'ㄕ', medial: '', final: 'ㄥ', tone: '', toneMark: '' },
+          { char: '機', bopomofo: 'ㄐㄧ', initial: 'ㄐ', medial: 'ㄧ', final: '', tone: '', toneMark: '' }
+        ],
+        exampleSentence: '救難直升機在空中快速盤旋。'
+      },
+      {
+        id: 'w_ambulance',
+        hanzi: '救護車',
+        emoji: '🚑',
+        bpmfFull: 'ㄐㄧㄡˋ ㄏㄨˋ ㄔㄜ',
+        meaning: '響著警笛、急速送病人去醫院的白色醫療車',
+        characters: [
+          { char: '救', bopomofo: 'ㄐㄧㄡˋ', initial: 'ㄐ', medial: 'ㄧ', final: 'ㄡ', tone: 'ˋ', toneMark: 'ˋ' },
+          { char: '護', bopomofo: 'ㄏㄨˋ', initial: 'ㄏ', medial: '', final: 'ㄨ', tone: 'ˋ', toneMark: 'ˋ' },
+          { char: '車', bopomofo: 'ㄔㄜ', initial: 'ㄔ', medial: '', final: 'ㄜ', tone: '', toneMark: '' }
+        ],
+        exampleSentence: '救護車載著病人開向醫院。'
+      },
+      {
+        id: 'w_submarine',
+        hanzi: '潛水艇',
+        emoji: '🛥️',
+        bpmfFull: 'ㄑㄧㄢˊ ㄕㄨㄟˇ ㄊㄧㄥˇ',
+        meaning: '潛入深海探尋神秘海底世界的特殊船隻',
+        characters: [
+          { char: '潛', bopomofo: 'ㄑㄧㄢˊ', initial: 'ㄑ', medial: 'ㄧ', final: 'ㄢ', tone: 'ˊ', toneMark: 'ˊ' },
+          { char: '水', bopomofo: 'ㄕㄨㄟˇ', initial: 'ㄕ', medial: 'ㄨ', final: 'ㄟ', tone: 'ˇ', toneMark: 'ˇ' },
+          { char: '艇', bopomofo: 'ㄊㄧㄥˇ', initial: 'ㄊ', medial: 'ㄧ', final: 'ㄥ', tone: 'ˇ', toneMark: 'ˇ' }
+        ],
+        exampleSentence: '潛水艇潛入深邃蔚藍的海洋。'
+      },
+      {
+        id: 'w_sailboat',
+        hanzi: '帆船',
+        emoji: '⛵',
+        bpmfFull: 'ㄈㄢˊ ㄔㄨㄢˊ',
+        meaning: '乘著海風在浪花間前進的白色風帆小船',
+        characters: [
+          { char: '帆', bopomofo: 'ㄈㄢˊ', initial: 'ㄈ', medial: '', final: 'ㄢ', tone: 'ˊ', toneMark: 'ˊ' },
+          { char: '船', bopomofo: 'ㄔㄨㄢˊ', initial: 'ㄔ', medial: 'ㄨ', final: 'ㄢ', tone: 'ˊ', toneMark: 'ˊ' }
+        ],
+        exampleSentence: '美麗的帆船迎著海風航行。'
+      },
+      {
+        id: 'w_motorcycle',
+        hanzi: '機車',
+        emoji: '🛵',
+        bpmfFull: 'ㄐㄧ ㄔㄜ',
+        meaning: '戴好安全帽、穿梭在街頭的兩輪摩托車',
+        characters: [
+          { char: '機', bopomofo: 'ㄐㄧ', initial: 'ㄐ', medial: 'ㄧ', final: '', tone: '', toneMark: '' },
+          { char: '車', bopomofo: 'ㄔㄜ', initial: 'ㄔ', medial: '', final: 'ㄜ', tone: '', toneMark: '' }
+        ],
+        exampleSentence: '媽媽騎機車戴我安全上學。'
       }
     ],
     sentences: [
@@ -802,33 +828,6 @@ export const TOPICS = [
           { char: '的', bopomofo: '˙ㄉㄜ' },
           { char: '風', bopomofo: 'ㄈㄥ' },
           { char: '景', bopomofo: 'ㄐㄧㄥˇ' },
-          { char: '。', bopomofo: '' }
-        ]
-      },
-      {
-        id: 's_transport_2',
-        text: '紅色消防車開得很快，勇敢的消防員去救火。',
-        emoji: '🚒👨‍🚒',
-        tokens: [
-          { char: '紅', bopomofo: 'ㄏㄨㄥˊ' },
-          { char: '色', bopomofo: 'ㄙㄜˋ' },
-          { char: '消', bopomofo: 'ㄒㄧㄠ' },
-          { char: '防', bopomofo: 'ㄈㄤˊ' },
-          { char: '車', bopomofo: 'ㄔㄜ' },
-          { char: '開', bopomofo: 'ㄎㄞ' },
-          { char: '得', bopomofo: '˙ㄉㄜ' },
-          { char: '很', bopomofo: 'ㄏㄣˇ' },
-          { char: '快', bopomofo: 'ㄎㄨㄞˋ' },
-          { char: '，', bopomofo: '' },
-          { char: '勇', bopomofo: 'ㄩㄥˇ' },
-          { char: '敢', bopomofo: 'ㄍㄢˇ' },
-          { char: '的', bopomofo: '˙ㄉㄜ' },
-          { char: '消', bopomofo: 'ㄒㄧㄠ' },
-          { char: '防', bopomofo: 'ㄈㄤˊ' },
-          { char: '員', bopomofo: 'ㄩㄢˊ' },
-          { char: '去', bopomofo: 'ㄑㄩˋ' },
-          { char: '救', bopomofo: 'ㄐㄧㄡˋ' },
-          { char: '火', bopomofo: 'ㄏㄨㄛˇ' },
           { char: '。', bopomofo: '' }
         ]
       }
@@ -941,6 +940,67 @@ export const TOPICS = [
           { char: '歌', bopomofo: 'ㄍㄜ', initial: 'ㄍ', medial: '', final: 'ㄜ', tone: '', toneMark: '' }
         ],
         exampleSentence: '大家跟著音樂一起拍手大聲唱歌。'
+      },
+      {
+        id: 'w_textbook',
+        hanzi: '課本',
+        emoji: '📖',
+        bpmfFull: 'ㄎㄜˋ ㄅㄣˇ',
+        meaning: '記載豐富故事與注音知識的學習教材',
+        characters: [
+          { char: '課', bopomofo: 'ㄎㄜˋ', initial: 'ㄎ', medial: '', final: 'ㄜ', tone: 'ˋ', toneMark: 'ˋ' },
+          { char: '本', bopomofo: 'ㄅㄣˇ', initial: 'ㄅ', medial: '', final: 'ㄣ', tone: 'ˇ', toneMark: 'ˇ' }
+        ],
+        exampleSentence: '翻開語文課本大聲朗讀課文。'
+      },
+      {
+        id: 'w_scissors',
+        hanzi: '剪刀',
+        emoji: '✂️',
+        bpmfFull: 'ㄐㄧㄢˇ ㄉㄠ',
+        meaning: '在美勞課裁切色紙與勞作的安全工具',
+        characters: [
+          { char: '剪', bopomofo: 'ㄐㄧㄢˇ', initial: 'ㄐ', medial: 'ㄧ', final: 'ㄢ', tone: 'ˇ', toneMark: 'ˇ' },
+          { char: '刀', bopomofo: 'ㄉㄠ', initial: 'ㄉ', medial: '', final: 'ㄠ', tone: '', toneMark: '' }
+        ],
+        exampleSentence: '美勞課用剪刀剪出一顆大愛心。'
+      },
+      {
+        id: 'w_eraser',
+        hanzi: '橡皮擦',
+        emoji: '🧼',
+        bpmfFull: 'ㄒㄧㄤˋ ㄆㄧˊ ㄘㄚ',
+        meaning: '把寫錯的鉛筆字擦得乾乾淨淨的文具',
+        characters: [
+          { char: '橡', bopomofo: 'ㄒㄧㄤˋ', initial: 'ㄒ', medial: 'ㄧ', final: 'ㄤ', tone: 'ˋ', toneMark: 'ˋ' },
+          { char: '皮', bopomofo: 'ㄆㄧˊ', initial: 'ㄆ', medial: '', final: 'ㄧ', tone: 'ˊ', toneMark: 'ˊ' },
+          { char: '擦', bopomofo: 'ㄘㄚ', initial: 'ㄘ', medial: '', final: 'ㄚ', tone: '', toneMark: '' }
+        ],
+        exampleSentence: '用橡皮擦把錯字擦得乾乾淨淨。'
+      },
+      {
+        id: 'w_playground',
+        hanzi: '操場',
+        emoji: '🏃',
+        bpmfFull: 'ㄘㄠ ㄔㄤˇ',
+        meaning: '下課時跑步、踢球與嬉戲的寬闊紅土跑道',
+        characters: [
+          { char: '操', bopomofo: 'ㄘㄠ', initial: 'ㄘ', medial: '', final: 'ㄠ', tone: '', toneMark: '' },
+          { char: '場', bopomofo: 'ㄔㄤˇ', initial: 'ㄔ', medial: '', final: 'ㄤ', tone: 'ˇ', toneMark: 'ˇ' }
+        ],
+        exampleSentence: '小朋友在操場上快樂地跑步。'
+      },
+      {
+        id: 'w_swing',
+        hanzi: '鞦韆',
+        emoji: '🎪',
+        bpmfFull: 'ㄑㄧㄡ ㄑㄧㄢ',
+        meaning: '坐在木板上隨風擺盪升高的好玩遊具',
+        characters: [
+          { char: '鞦', bopomofo: 'ㄑㄧㄡ', initial: 'ㄑ', medial: 'ㄧ', final: 'ㄡ', tone: '', toneMark: '' },
+          { char: '韆', bopomofo: 'ㄑㄧㄢ', initial: 'ㄑ', medial: 'ㄧ', final: 'ㄢ', tone: '', toneMark: '' }
+        ],
+        exampleSentence: '盪鞦韆盪得高高的，好像飛在空中。'
       }
     ],
     sentences: [
@@ -966,34 +1026,12 @@ export const TOPICS = [
           { char: '玩', bopomofo: 'ㄨㄢˊ' },
           { char: '！', bopomofo: '' }
         ]
-      },
-      {
-        id: 's_school_2',
-        text: '下課了，小朋友們排隊玩溜滑梯。',
-        emoji: '🛝🎉',
-        tokens: [
-          { char: '下', bopomofo: 'ㄒㄧㄚˋ' },
-          { char: '課', bopomofo: 'ㄎㄜˋ' },
-          { char: '了', bopomofo: '˙ㄌㄜ' },
-          { char: '，', bopomofo: '' },
-          { char: '小', bopomofo: 'ㄒㄧㄠˇ' },
-          { char: '朋', bopomofo: 'ㄆㄥˊ' },
-          { char: '友', bopomofo: 'ㄧㄡˇ' },
-          { char: '們', bopomofo: '˙ㄇㄣ' },
-          { char: '排', bopomofo: 'ㄆㄞˊ' },
-          { char: '隊', bopomofo: 'ㄉㄨㄟˋ' },
-          { char: '玩', bopomofo: 'ㄨㄢˊ' },
-          { char: '溜', bopomofo: 'ㄌㄧㄡ' },
-          { char: '滑', bopomofo: 'ㄏㄨㄚˊ' },
-          { char: '梯', bopomofo: 'ㄊㄧ' },
-          { char: '。', bopomofo: '' }
-        ]
       }
     ]
   },
   {
     id: 'family',
-    name: '溫馨家庭生活',
+    name: '溫馨家庭與生活',
     icon: '🏠',
     badgeIcon: '❤️',
     color: 'from-pink-400 to-rose-500',
@@ -1073,6 +1111,78 @@ export const TOPICS = [
           { char: '鞋', bopomofo: 'ㄒㄧㄝˊ', initial: 'ㄒ', medial: 'ㄧ', final: 'ㄝ', tone: 'ˊ', toneMark: 'ˊ' }
         ],
         exampleSentence: '我會自己穿好鞋子準備出門。'
+      },
+      {
+        id: 'w_grandpa',
+        hanzi: '爺爺',
+        emoji: '👴',
+        bpmfFull: 'ㄧㄝˊ ˙ㄧㄝ',
+        meaning: '慈祥和藹、帶我們去公園散步的老長輩',
+        characters: [
+          { char: '爺', bopomofo: 'ㄧㄝˊ', initial: '', medial: 'ㄧ', final: 'ㄝ', tone: 'ˊ', toneMark: 'ˊ' },
+          { char: '爺', bopomofo: '˙ㄧㄝ', initial: '', medial: 'ㄧ', final: 'ㄝ', tone: '˙', toneMark: '˙' }
+        ],
+        exampleSentence: '爺爺牽著我的小手在公園散步。'
+      },
+      {
+        id: 'w_grandma',
+        hanzi: '奶奶',
+        emoji: '👵',
+        bpmfFull: 'ㄋㄞˇ ˙ㄋㄞ',
+        meaning: '笑容溫暖、總是端出美味點心的慈祥祖母',
+        characters: [
+          { char: '奶', bopomofo: 'ㄋㄞˇ', initial: 'ㄋ', medial: '', final: 'ㄞ', tone: 'ˇ', toneMark: 'ˇ' },
+          { char: '奶', bopomofo: '˙ㄋㄞ', initial: 'ㄋ', medial: '', final: 'ㄞ', tone: '˙', toneMark: '˙' }
+        ],
+        exampleSentence: '奶奶織了一件溫暖的毛衣送給我。'
+      },
+      {
+        id: 'w_drinkwater',
+        hanzi: '喝水',
+        emoji: '🥤',
+        bpmfFull: 'ㄏㄜ ㄕㄨㄟˇ',
+        meaning: '運動後補充水分、保持身體健康的好習慣',
+        characters: [
+          { char: '喝', bopomofo: 'ㄏㄜ', initial: 'ㄏ', medial: '', final: 'ㄜ', tone: '', toneMark: '' },
+          { char: '水', bopomofo: 'ㄕㄨㄟˇ', initial: 'ㄕ', medial: 'ㄨ', final: 'ㄟ', tone: 'ˇ', toneMark: 'ˇ' }
+        ],
+        exampleSentence: '多喝水身體才會健康有活力。'
+      },
+      {
+        id: 'w_bath',
+        hanzi: '洗澡',
+        emoji: '🛁',
+        bpmfFull: 'ㄒㄧˇ ㄗㄠˇ',
+        meaning: '在浴缸裡泡泡水、洗去全身汗水與髒污',
+        characters: [
+          { char: '洗', bopomofo: 'ㄒㄧˇ', initial: 'ㄒ', medial: 'ㄧ', final: '', tone: 'ˇ', toneMark: 'ˇ' },
+          { char: '澡', bopomofo: 'ㄗㄠˇ', initial: 'ㄗ', medial: '', final: 'ㄠ', tone: 'ˇ', toneMark: 'ˇ' }
+        ],
+        exampleSentence: '洗個熱水澡，舒服又乾淨。'
+      },
+      {
+        id: 'w_hug',
+        hanzi: '擁抱',
+        emoji: '🫂',
+        bpmfFull: 'ㄩㄥˇ ㄅㄠˋ',
+        meaning: '張開雙手緊緊抱住家人、傳遞愛與溫暖',
+        characters: [
+          { char: '擁', bopomofo: 'ㄩㄥˇ', initial: '', medial: 'ㄩ', final: 'ㄥ', tone: 'ˇ', toneMark: 'ˇ' },
+          { char: '抱', bopomofo: 'ㄅㄠˋ', initial: 'ㄅ', medial: '', final: 'ㄠ', tone: 'ˋ', toneMark: 'ˋ' }
+        ],
+        exampleSentence: '給親愛的爸爸媽媽一個溫暖的大擁抱。'
+      },
+      {
+        id: 'w_comb',
+        hanzi: '梳頭',
+        emoji: '🪮',
+        bpmfFull: 'ㄕㄨ ㄊㄡˊ',
+        meaning: '用梳子把頭髮梳理得整整齊齊',
+        characters: [
+          { char: '梳', bopomofo: 'ㄕㄨ', initial: 'ㄕ', medial: '', final: 'ㄨ', tone: '', toneMark: '' },
+          { char: '頭', bopomofo: 'ㄊㄡˊ', initial: 'ㄊ', medial: '', final: 'ㄡ', tone: 'ˊ', toneMark: 'ˊ' }
+        ],
+        exampleSentence: '出門前把頭髮梳理得整整齊齊。'
       }
     ],
     sentences: [
@@ -1096,31 +1206,6 @@ export const TOPICS = [
           { char: '吃', bopomofo: 'ㄔ' },
           { char: '晚', bopomofo: 'ㄨㄢˇ' },
           { char: '餐', bopomofo: 'ㄘㄢ' },
-          { char: '。', bopomofo: '' }
-        ]
-      },
-      {
-        id: 's_family_2',
-        text: '睡覺前要刷牙洗臉，對爸爸媽媽說晚安。',
-        emoji: '🪥🌙',
-        tokens: [
-          { char: '睡', bopomofo: 'ㄕㄨㄟˋ' },
-          { char: '覺', bopomofo: 'ㄐㄧㄠˋ' },
-          { char: '前', bopomofo: 'ㄑㄧㄢˊ' },
-          { char: '要', bopomofo: 'ㄧㄠˋ' },
-          { char: '刷', bopomofo: 'ㄕㄨㄚ' },
-          { char: '牙', bopomofo: 'ㄧㄚˊ' },
-          { char: '洗', bopomofo: 'ㄒㄧˇ' },
-          { char: '臉', bopomofo: 'ㄌㄧㄢˇ' },
-          { char: '，', bopomofo: '' },
-          { char: '對', bopomofo: 'ㄉㄨㄟˋ' },
-          { char: '爸', bopomofo: 'ㄅㄚˋ' },
-          { char: '爸', bopomofo: '˙ㄅㄚ' },
-          { char: '媽', bopomofo: 'ㄇㄚ' },
-          { char: '媽', bopomofo: '˙ㄇㄚ' },
-          { char: '說', bopomofo: 'ㄕㄨㄛ' },
-          { char: '晚', bopomofo: 'ㄨㄢˇ' },
-          { char: '安', bopomofo: 'ㄢ' },
           { char: '。', bopomofo: '' }
         ]
       }
@@ -1209,6 +1294,79 @@ export const TOPICS = [
           { char: '藏', bopomofo: 'ㄗㄤˋ', initial: 'ㄗ', medial: '', final: 'ㄤ', tone: 'ˋ', toneMark: 'ˋ' }
         ],
         exampleSentence: '我們沿著藏寶圖找到發光的寶藏。'
+      },
+      {
+        id: 'w_dragon',
+        hanzi: '巨龍',
+        emoji: '🐉',
+        bpmfFull: 'ㄐㄩˋ ㄌㄨㄥˊ',
+        meaning: '會噴出火焰、在天空盤旋守護寶藏的神話神獸',
+        characters: [
+          { char: '巨', bopomofo: 'ㄐㄩˋ', initial: 'ㄐ', medial: 'ㄩ', final: '', tone: 'ˋ', toneMark: 'ˋ' },
+          { char: '龍', bopomofo: 'ㄌㄨㄥˊ', initial: 'ㄌ', medial: '', final: 'ㄨㄥ', tone: 'ˊ', toneMark: 'ˊ' }
+        ],
+        exampleSentence: '友善的巨龍載著冒險家飛越高山。'
+      },
+      {
+        id: 'w_unicorn',
+        hanzi: '獨角獸',
+        emoji: '🦄',
+        bpmfFull: 'ㄉㄨˊ ㄐㄧㄠˇ ㄕㄡˋ',
+        meaning: '額頭長著旋轉金角、純白夢幻的森林神獸',
+        characters: [
+          { char: '獨', bopomofo: 'ㄉㄨˊ', initial: 'ㄉ', medial: '', final: 'ㄨ', tone: 'ˊ', toneMark: 'ˊ' },
+          { char: '角', bopomofo: 'ㄐㄧㄠˇ', initial: 'ㄐ', medial: 'ㄧ', final: 'ㄠ', tone: 'ˇ', toneMark: 'ˇ' },
+          { char: '獸', bopomofo: 'ㄕㄡˋ', initial: 'ㄕ', medial: '', final: 'ㄡ', tone: 'ˋ', toneMark: 'ˋ' }
+        ],
+        exampleSentence: '彩虹森林裡住著純潔美麗的獨角獸。'
+      },
+      {
+        id: 'w_king',
+        hanzi: '國王',
+        emoji: '👑',
+        bpmfFull: 'ㄍㄨㄛˊ ㄨㄤˊ',
+        meaning: '戴著金色皇冠、治理王國的威嚴領袖',
+        characters: [
+          { char: '國', bopomofo: 'ㄍㄨㄛˊ', initial: 'ㄍ', medial: 'ㄨ', final: 'ㄛ', tone: 'ˊ', toneMark: 'ˊ' },
+          { char: '王', bopomofo: 'ㄨㄤˊ', initial: '', medial: 'ㄨ', final: 'ㄤ', tone: 'ˊ', toneMark: 'ˊ' }
+        ],
+        exampleSentence: '國王坐在王座上親切地接見人民。'
+      },
+      {
+        id: 'w_fairy',
+        hanzi: '仙女',
+        emoji: '🧚',
+        bpmfFull: 'ㄒㄧㄢ ㄋㄩˇ',
+        meaning: '背後有著透明翅膀、能施展美好魔法的精靈',
+        characters: [
+          { char: '仙', bopomofo: 'ㄒㄧㄢ', initial: 'ㄒ', medial: 'ㄧ', final: 'ㄢ', tone: '', toneMark: '' },
+          { char: '女', bopomofo: 'ㄋㄩˇ', initial: 'ㄋ', medial: 'ㄩ', final: '', tone: 'ˇ', toneMark: 'ˇ' }
+        ],
+        exampleSentence: '花朵上的小仙女灑下金色的星光粉。'
+      },
+      {
+        id: 'w_carpet',
+        hanzi: '飛毯',
+        emoji: '🧞',
+        bpmfFull: 'ㄈㄟ ㄊㄢˇ',
+        meaning: '能在空中自由穿梭飛翔的神奇魔毯',
+        characters: [
+          { char: '飛', bopomofo: 'ㄈㄟ', initial: 'ㄈ', medial: '', final: 'ㄟ', tone: '', toneMark: '' },
+          { char: '毯', bopomofo: 'ㄊㄢˇ', initial: 'ㄊ', medial: '', final: 'ㄢ', tone: 'ˇ', toneMark: 'ˇ' }
+        ],
+        exampleSentence: '坐上神奇飛毯在雲朵上方翱翔。'
+      },
+      {
+        id: 'w_crown',
+        hanzi: '皇冠',
+        emoji: '👑',
+        bpmfFull: 'ㄏㄨㄤˊ ㄍㄨㄢ',
+        meaning: '鑲嵌七彩寶石、象徵榮耀與勝利的金色冠冕',
+        characters: [
+          { char: '皇', bopomofo: 'ㄏㄨㄤˊ', initial: 'ㄏ', medial: 'ㄨ', final: 'ㄤ', tone: 'ˊ', toneMark: 'ˊ' },
+          { char: '冠', bopomofo: 'ㄍㄨㄢ', initial: 'ㄍ', medial: 'ㄨ', final: 'ㄢ', tone: '', toneMark: '' }
+        ],
+        exampleSentence: '金光閃閃的皇冠象徵至高無上的榮譽。'
       }
     ],
     sentences: [
@@ -1325,6 +1483,81 @@ export const TOPICS = [
           { char: '形', bopomofo: 'ㄒㄧㄥˊ', initial: 'ㄒ', medial: 'ㄧ', final: 'ㄥ', tone: 'ˊ', toneMark: 'ˊ' }
         ],
         exampleSentence: '美味的披薩切成一塊塊三角形。'
+      },
+      {
+        id: 'w_purple',
+        hanzi: '紫色',
+        emoji: '🟣',
+        bpmfFull: 'ㄗˇ ㄙㄜˋ',
+        meaning: '像薰衣草與紫葡萄般高貴神秘的顏色',
+        characters: [
+          { char: '紫', bopomofo: 'ㄗˇ', initial: 'ㄗ', medial: '', final: '', tone: 'ˇ', toneMark: 'ˇ' },
+          { char: '色', bopomofo: 'ㄙㄜˋ', initial: 'ㄙ', medial: '', final: 'ㄜ', tone: 'ˋ', toneMark: 'ˋ' }
+        ],
+        exampleSentence: '花瓶裡插著一束紫色的薰衣草。'
+      },
+      {
+        id: 'w_orange_col',
+        hanzi: '橙色',
+        emoji: '🟠',
+        bpmfFull: 'ㄔㄥˊ ㄙㄜˋ',
+        meaning: '像多汁柳橙與日落晚霞般溫暖的色彩',
+        characters: [
+          { char: '橙', bopomofo: 'ㄔㄥˊ', initial: 'ㄔ', medial: '', final: 'ㄥ', tone: 'ˊ', toneMark: 'ˊ' },
+          { char: '色', bopomofo: 'ㄙㄜˋ', initial: 'ㄙ', medial: '', final: 'ㄜ', tone: 'ˋ', toneMark: 'ˋ' }
+        ],
+        exampleSentence: '夕陽把天空染成了溫暖的橙色。'
+      },
+      {
+        id: 'w_pink',
+        hanzi: '粉紅色',
+        emoji: '🌸',
+        bpmfFull: 'ㄈㄣˇ ㄏㄨㄥˊ ㄙㄜˋ',
+        meaning: '像盛開櫻花與水蜜桃般甜美溫柔的顏色',
+        characters: [
+          { char: '粉', bopomofo: 'ㄈㄣˇ', initial: 'ㄈ', medial: '', final: 'ㄣ', tone: 'ˇ', toneMark: 'ˇ' },
+          { char: '紅', bopomofo: 'ㄏㄨㄥˊ', initial: 'ㄏ', medial: '', final: 'ㄨㄥ', tone: 'ˊ', toneMark: 'ˊ' },
+          { char: '色', bopomofo: 'ㄙㄜˋ', initial: 'ㄙ', medial: '', final: 'ㄜ', tone: 'ˋ', toneMark: 'ˋ' }
+        ],
+        exampleSentence: '春天公園裡盛開著粉紅色的櫻花。'
+      },
+      {
+        id: 'w_square',
+        hanzi: '正方形',
+        emoji: '⏹️',
+        bpmfFull: 'ㄓㄥˋ ㄈㄤ ㄒㄧㄥˊ',
+        meaning: '四個邊一樣長、四個角都是直角的對稱圖形',
+        characters: [
+          { char: '正', bopomofo: 'ㄓㄥˋ', initial: 'ㄓ', medial: '', final: 'ㄥ', tone: 'ˋ', toneMark: 'ˋ' },
+          { char: '方', bopomofo: 'ㄈㄤ', initial: 'ㄈ', medial: '', final: 'ㄤ', tone: '', toneMark: '' },
+          { char: '形', bopomofo: 'ㄒㄧㄥˊ', initial: 'ㄒ', medial: 'ㄧ', final: 'ㄥ', tone: 'ˊ', toneMark: 'ˊ' }
+        ],
+        exampleSentence: '玩具魔術方塊每個面都是正方形。'
+      },
+      {
+        id: 'w_star_shape',
+        hanzi: '星形',
+        emoji: '⭐',
+        bpmfFull: 'ㄒㄧㄥ ㄒㄧㄥˊ',
+        meaning: '有五個尖角、像夜空星光閃耀的漂亮圖形',
+        characters: [
+          { char: '星', bopomofo: 'ㄒㄧㄥ', initial: 'ㄒ', medial: 'ㄧ', final: 'ㄥ', tone: '', toneMark: '' },
+          { char: '形', bopomofo: 'ㄒㄧㄥˊ', initial: 'ㄒ', medial: 'ㄧ', final: 'ㄥ', tone: 'ˊ', toneMark: 'ˊ' }
+        ],
+        exampleSentence: '聖誕樹頂端裝飾著一顆星形寶石。'
+      },
+      {
+        id: 'w_heart_shape',
+        hanzi: '愛心形',
+        emoji: '❤️',
+        bpmfFull: 'ㄞˋ ㄒㄧㄣ ㄒㄧㄥˊ',
+        meaning: '象徵滿滿溫暖與愛意的愛心圖案',
+        characters: [
+          { char: '愛', bopomofo: 'ㄞˋ', initial: '', medial: '', final: 'ㄞ', tone: 'ˋ', toneMark: 'ˋ' },
+          { char: '心', bopomofo: 'ㄒㄧㄣ', initial: 'ㄒ', medial: 'ㄧ', final: 'ㄣ', tone: '', toneMark: '' },
+          { char: '形', bopomofo: 'ㄒㄧㄥˊ', initial: 'ㄒ', medial: 'ㄧ', final: 'ㄥ', tone: 'ˊ', toneMark: 'ˊ' }
+        ],
+        exampleSentence: '卡片上畫著一個紅色的大愛心形。'
       }
     ],
     sentences: [
