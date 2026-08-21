@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { BADGES } from '../../data/badgesData';
-import { Trophy, Star, Sparkles, Lock, CheckCircle2, Volume2 } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { getBadgesForDifficulty, DIFFICULTY_CONFIG } from '../../data/badgesData';
+import { Trophy, Star, Sparkles, Lock, CheckCircle2, Volume2, Shield } from 'lucide-react';
 import { soundEffects } from '../../utils/soundEffects';
 import { speechHelper } from '../../utils/speechHelper';
 
@@ -10,9 +10,17 @@ export default function BadgesGalleryView({
   completedWords = [],
   completedSentences = [],
   spellingWinCount = 0,
-  quizCount = 0
+  quizCount = 0,
+  difficulty = 'easy'
 }) {
   const [selectedBadge, setSelectedBadge] = useState(null);
+
+  // 依據當前難度取得目標與描述
+  const badgesList = useMemo(() => {
+    return getBadgesForDifficulty(difficulty);
+  }, [difficulty]);
+
+  const currentDiffConfig = DIFFICULTY_CONFIG[difficulty] || DIFFICULTY_CONFIG.easy;
 
   const handleBadgeClick = (badge, isUnlocked) => {
     soundEffects.playBubble();
@@ -23,7 +31,7 @@ export default function BadgesGalleryView({
   };
 
   const unlockedCount = unlockedBadges.length;
-  const totalBadges = BADGES.length;
+  const totalBadges = badgesList.length;
   const progressPercent = Math.round((unlockedCount / totalBadges) * 100);
 
   return (
@@ -34,14 +42,20 @@ export default function BadgesGalleryView({
           <div className="flex items-center gap-3">
             <span className="text-5xl p-2 bg-white/20 rounded-2xl">🏆</span>
             <div>
-              <h2 className="text-2xl md:text-3xl font-black">冒險榮譽圖鑑</h2>
-              <p className="text-white/90 text-xs font-semibold mt-0.5">
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl md:text-3xl font-black">冒險榮譽圖鑑</h2>
+                {/* 難度標籤膠囊 */}
+                <span className="bg-white/20 text-yellow-200 border border-white/30 text-xs px-2.5 py-0.5 rounded-full font-black flex items-center gap-1">
+                  <Shield size={12} /> 難度：{currentDiffConfig.label}
+                </span>
+              </div>
+              <p className="text-white/90 text-xs font-semibold mt-1">
                 完成學習任務，解鎖專屬可愛成就與榮譽徽章！
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 bg-white/20 px-4 py-3 rounded-2xl backdrop-blur-sm">
+          <div className="flex items-center gap-3 bg-white/20 px-4 py-3 rounded-2xl backdrop-blur-sm self-start sm:self-auto">
             <Star size={24} className="text-yellow-300 fill-yellow-300 animate-bounceSmall" />
             <div>
               <span className="text-xs text-white/80 font-bold block">目前星星</span>
@@ -87,7 +101,7 @@ export default function BadgesGalleryView({
 
       {/* 徽章網格 */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {BADGES.map(badge => {
+        {badgesList.map(badge => {
           const isUnlocked = unlockedBadges.includes(badge.id);
           return (
             <div
@@ -114,6 +128,11 @@ export default function BadgesGalleryView({
               <h4 className={`text-base font-black text-center ${isUnlocked ? 'text-gray-800' : 'text-gray-400'}`}>
                 {badge.name}
               </h4>
+
+              {/* 目標說明 */}
+              <p className="text-[11px] text-gray-500 text-center font-medium mt-1 line-clamp-1">
+                {badge.description}
+              </p>
 
               {/* 狀態 */}
               <span

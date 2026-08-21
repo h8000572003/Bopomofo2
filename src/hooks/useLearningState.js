@@ -1,16 +1,25 @@
 import { useState, useEffect } from 'react';
-import { BADGES } from '../data/badgesData';
+import { getBadgesForDifficulty } from '../data/badgesData';
 import { soundEffects } from '../utils/soundEffects';
 
-const STORAGE_KEY = 'BOPOMOFO_ADVENTURE_STATE_V3';
+const STORAGE_KEY = 'BOPOMOFO_ADVENTURE_STATE_V4';
 
-const getTodayString = () => {
+export const getTodayString = () => {
   const d = new Date();
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
+
+const getInitialDailyQuests = () => ({
+  date: getTodayString(),
+  drawingCount: 0,
+  flashcardCount: 0,
+  sentenceCount: 0,
+  quizCount: 0,
+  isGloryClaimed: false
+});
 
 const defaultState = {
   stars: 0,
@@ -25,12 +34,16 @@ const defaultState = {
   checkInDates: [],
   streakCount: 0,
   lastCheckInDate: null,
+  gloryCount: 0,
+  gloryDates: [],
+  dailyQuests: getInitialDailyQuests(),
   customTopics: [],
   newsArticles: [],
   settings: {
     speechRate: 0.85,
     isMuted: false,
     theme: 'sunny',
+    badgeDifficulty: 'easy', // 'easy' (1x) | 'medium' (2x) | 'hard' (4x)
   }
 };
 
@@ -39,7 +52,19 @@ export function useLearningState() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        return { ...defaultState, ...JSON.parse(saved) };
+        const parsed = JSON.parse(saved);
+        const today = getTodayString();
+        const quests = (parsed.dailyQuests && parsed.dailyQuests.date === today)
+          ? parsed.dailyQuests
+          : getInitialDailyQuests();
+
+        return {
+          ...defaultState,
+          ...parsed,
+          settings: { ...defaultState.settings, ...parsed.settings },
+          dailyQuests: quests,
+          gloryDates: parsed.gloryDates || []
+        };
       }
     } catch (e) {
       console.warn('Failed to load learning state', e);
@@ -48,6 +73,7 @@ export function useLearningState() {
   });
 
   const [newlyUnlockedBadge, setNewlyUnlockedBadge] = useState(null);
+  const [isGloryModalOpen, setIsGloryModalOpen] = useState(false);
 
   // 儲存至 LocalStorage
   useEffect(() => {
@@ -63,12 +89,25 @@ export function useLearningState() {
     soundEffects.setMuted(state.settings.isMuted);
   }, [state.settings.isMuted]);
 
-  // 檢查是否解鎖新徽章
+  // 確保今日任務資料結構存在
+  const ensureTodayQuests = (currentState) => {
+    const today = getTodayString();
+    if (!currentState.dailyQuests || currentState.dailyQuests.date !== today) {
+      return {
+        ...currentState,
+        dailyQuests: getInitialDailyQuests()
+      };
+    }
+    return currentState;
+  };
+
+  // 檢查是否解鎖新徽章 (動態依難度倍率計算)
   const checkBadges = (updatedState) => {
     const newlyUnlocked = [];
     const currentUnlocked = updatedState.unlockedBadges || [];
+    const badges = getBadgesForDifficulty(updatedState.settings?.badgeDifficulty || 'easy');
 
-    BADGES.forEach(badge => {
+    badges.forEach(badge => {
       if (currentUnlocked.includes(badge.id)) return;
 
       let isConditionMet = false;
@@ -166,17 +205,161 @@ export function useLearningState() {
     return currentState;
   };
 
+  // 🌟 領取每日榮耀大獎勵 (+10⭐, 蓋金冠印章)
+  const claimDailyGlory = () => {
+    const today = getTodayString();
+    setState(prev => {
+      const ensured = ensureTodayQuests(prev);
+      if (ensured.dailyQuests.isGloryClaimed) return prev;
+
+      soundEffects.playVictoryFanfare();
+      const updatedQuests = { ...ensured.dailyQuests, isGloryClaimed: true };
+      const updatedGloryDates = ensured.gloryDates?.includes(today)
+        ? ensured.gloryDates
+        : [...(ensured.gloryDates || []), today];
+
+      const updated = {
+        ...ensured,
+        stars: ensured.stars + 10,
+        gloryCount: (ensured.gloryCount || 0) + 1,
+        gloryDates: updatedGloryDates,
+        dailyQuests: updatedQuests
+      };
+
+      setIsGloryModalOpen(true);
+      return checkBadges(triggerAutoCheckIn(updated));
+    });
+  };
+
+  // 記錄手寫描紅練習
+  const recordDrawingPractice = (symbol) => {
+    setState(prev => {
+      const ensured = ensureTodayQuests(prev);
+      soundEffects.playCorrect();
+      const updatedQuests = {
+        ...ensured.dailyQuests,
+        drawingCount: (ensured.dailyQuests.drawingCount || 0) + 1
+      };
+      const updated = {
+        ...ensured,
+        stars: ensured.stars + 1,
+        drawingPracticeCount: (ensured.drawingPracticeCount || 0) + 1,
+        dailyQuests: updatedQuests
+      };
+      return checkBadges(triggerAutoCheckIn(updated));
+    });
+  };
+
+  // 標記字卡已記住 / 待複習
+  const toggleFlashcardMastered = (wordId) => {
+    setState(prev => {
+      const ensured = ensureTodayQuests(prev);
+      soundEffects.playBubble();
+      const list = ensured.flashcardMastered || [];
+      const isMastered = list.includes(wordId);
+      const updatedList = isMastered ? list.filter(id => id !== wordId) : [...list, wordId];
+      const newStars = !isMastered ? ensured.stars + 1 : ensured.stars;
+      const updatedQuests = {
+        ...ensured.dailyQuests,
+        flashcardCount: (ensured.dailyQuests.flashcardCount || 0) + 1
+      };
+      const updated = {
+        ...ensured,
+        stars: newStars,
+        flashcardMastered: updatedList,
+        dailyQuests: updatedQuests
+      };
+      return checkBadges(triggerAutoCheckIn(updated));
+    });
+  };
+
+  // 標記單字完成
+  const markWordCompleted = (wordId, earnStars = 1) => {
+    setState(prev => {
+      const ensured = ensureTodayQuests(prev);
+      const isNew = !ensured.completedWords.includes(wordId);
+      const newCompleted = isNew ? [...ensured.completedWords, wordId] : ensured.completedWords;
+      const newStars = isNew ? ensured.stars + earnStars : ensured.stars;
+      if (isNew) soundEffects.playStarWin();
+      const updated = {
+        ...ensured,
+        completedWords: newCompleted,
+        stars: newStars
+      };
+      return checkBadges(triggerAutoCheckIn(updated));
+    });
+  };
+
+  // 標記句子朗讀完成
+  const markSentenceCompleted = (sentenceId, earnedStars = 2) => {
+    setState(prev => {
+      const ensured = ensureTodayQuests(prev);
+      const isNew = !ensured.completedSentences.includes(sentenceId);
+      const newCompleted = isNew ? [...ensured.completedSentences, sentenceId] : ensured.completedSentences;
+      const newStars = ensured.stars + earnedStars;
+      soundEffects.playStarWin();
+      const updatedQuests = {
+        ...ensured.dailyQuests,
+        sentenceCount: (ensured.dailyQuests.sentenceCount || 0) + 1
+      };
+      const updated = {
+        ...ensured,
+        completedSentences: newCompleted,
+        stars: newStars,
+        dailyQuests: updatedQuests
+      };
+      return checkBadges(triggerAutoCheckIn(updated));
+    });
+  };
+
   // 標記新聞朗讀完成
   const markNewsCompleted = (newsId, earnedStars = 2) => {
     setState(prev => {
-      const isNew = !prev.completedNews?.includes(newsId);
-      const newCompleted = isNew ? [...(prev.completedNews || []), newsId] : prev.completedNews;
-      const newStars = prev.stars + earnedStars;
+      const ensured = ensureTodayQuests(prev);
+      const isNew = !ensured.completedNews?.includes(newsId);
+      const newCompleted = isNew ? [...(ensured.completedNews || []), newsId] : ensured.completedNews;
+      const newStars = ensured.stars + earnedStars;
       soundEffects.playStarWin();
+      const updatedQuests = {
+        ...ensured.dailyQuests,
+        sentenceCount: (ensured.dailyQuests.sentenceCount || 0) + 1
+      };
       const updated = {
-        ...prev,
+        ...ensured,
         completedNews: newCompleted,
-        stars: newStars
+        stars: newStars,
+        dailyQuests: updatedQuests
+      };
+      return checkBadges(triggerAutoCheckIn(updated));
+    });
+  };
+
+  // 記錄拼字遊戲勝利
+  const recordSpellingWin = (earnedStars = 2) => {
+    setState(prev => {
+      const ensured = ensureTodayQuests(prev);
+      const updated = {
+        ...ensured,
+        stars: ensured.stars + earnedStars,
+        spellingWinCount: ensured.spellingWinCount + 1
+      };
+      return checkBadges(triggerAutoCheckIn(updated));
+    });
+  };
+
+  // 記錄每日測驗完成
+  const recordQuizCompleted = (earnedStars = 3) => {
+    setState(prev => {
+      const ensured = ensureTodayQuests(prev);
+      const updatedQuests = {
+        ...ensured.dailyQuests,
+        quizCount: (ensured.dailyQuests.quizCount || 0) + 1
+      };
+      const updated = {
+        ...ensured,
+        stars: ensured.stars + earnedStars,
+        quizCount: ensured.quizCount + 1,
+        dailyQuests: updatedQuests
       };
       return checkBadges(triggerAutoCheckIn(updated));
     });
@@ -184,13 +367,10 @@ export function useLearningState() {
 
   // 新增單一新聞
   const addNewsItem = (newsItem) => {
-    setState(prev => {
-      const updated = {
-        ...prev,
-        newsArticles: [newsItem, ...(prev.newsArticles || [])]
-      };
-      return updated;
-    });
+    setState(prev => ({
+      ...prev,
+      newsArticles: [newsItem, ...(prev.newsArticles || [])]
+    }));
   };
 
   // 批次新增即時新聞
@@ -207,42 +387,10 @@ export function useLearningState() {
 
   // 匯入自訂/線上主題庫
   const importCustomTopics = (newTopics) => {
-    setState(prev => {
-      return {
-        ...prev,
-        customTopics: newTopics
-      };
-    });
-  };
-
-  // 記錄手寫描紅練習
-  const recordDrawingPractice = (symbol) => {
-    setState(prev => {
-      soundEffects.playCorrect();
-      const updated = {
-        ...prev,
-        stars: prev.stars + 1,
-        drawingPracticeCount: (prev.drawingPracticeCount || 0) + 1
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
-  };
-
-  // 標記字卡已記住 / 待複習
-  const toggleFlashcardMastered = (wordId) => {
-    setState(prev => {
-      soundEffects.playBubble();
-      const list = prev.flashcardMastered || [];
-      const isMastered = list.includes(wordId);
-      const updatedList = isMastered ? list.filter(id => id !== wordId) : [...list, wordId];
-      const newStars = !isMastered ? prev.stars + 1 : prev.stars;
-      const updated = {
-        ...prev,
-        stars: newStars,
-        flashcardMastered: updatedList
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
+    setState(prev => ({
+      ...prev,
+      customTopics: newTopics
+    }));
   };
 
   // 增加星星
@@ -254,68 +402,15 @@ export function useLearningState() {
     });
   };
 
-  // 標記單字完成
-  const markWordCompleted = (wordId, earnStars = 1) => {
-    setState(prev => {
-      const isNew = !prev.completedWords.includes(wordId);
-      const newCompleted = isNew ? [...prev.completedWords, wordId] : prev.completedWords;
-      const newStars = isNew ? prev.stars + earnStars : prev.stars;
-      if (isNew) soundEffects.playStarWin();
-      const updated = {
-        ...prev,
-        completedWords: newCompleted,
-        stars: newStars
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
-  };
-
-  // 標記句子朗讀完成
-  const markSentenceCompleted = (sentenceId, earnedStars = 2) => {
-    setState(prev => {
-      const isNew = !prev.completedSentences.includes(sentenceId);
-      const newCompleted = isNew ? [...prev.completedSentences, sentenceId] : prev.completedSentences;
-      const newStars = prev.stars + earnedStars;
-      soundEffects.playStarWin();
-      const updated = {
-        ...prev,
-        completedSentences: newCompleted,
-        stars: newStars
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
-  };
-
-  // 記錄拼字遊戲勝利
-  const recordSpellingWin = (earnedStars = 2) => {
-    setState(prev => {
-      const updated = {
-        ...prev,
-        stars: prev.stars + earnedStars,
-        spellingWinCount: prev.spellingWinCount + 1
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
-  };
-
-  // 記錄每日測驗完成
-  const recordQuizCompleted = (earnedStars = 3) => {
-    setState(prev => {
-      const updated = {
-        ...prev,
-        stars: prev.stars + earnedStars,
-        quizCount: prev.quizCount + 1
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
-  };
-
   // 更新設定
   const updateSettings = (newSettings) => {
-    setState(prev => ({
-      ...prev,
-      settings: { ...prev.settings, ...newSettings }
-    }));
+    setState(prev => {
+      const updated = {
+        ...prev,
+        settings: { ...prev.settings, ...newSettings }
+      };
+      return checkBadges(updated);
+    });
   };
 
   // 新增自訂主題/單字
@@ -402,6 +497,10 @@ export function useLearningState() {
     setNewlyUnlockedBadge(null);
   };
 
+  const closeGloryModal = () => {
+    setIsGloryModalOpen(false);
+  };
+
   return {
     state,
     addStars,
@@ -416,11 +515,14 @@ export function useLearningState() {
     recordCheckIn,
     recordDrawingPractice,
     toggleFlashcardMastered,
+    claimDailyGlory,
     updateSettings,
     addCustomWord,
     addCustomSentence,
     resetProgress,
     newlyUnlockedBadge,
-    closeBadgeModal
+    closeBadgeModal,
+    isGloryModalOpen,
+    closeGloryModal
   };
 }

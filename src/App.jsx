@@ -11,6 +11,7 @@ import DailyQuizView from './components/DailyQuiz/DailyQuizView';
 import DailyTrackerView from './components/DailyTracker/DailyTrackerView';
 import BadgesGalleryView from './components/BadgesGallery/BadgesGalleryView';
 import ConfettiModal from './components/Common/ConfettiModal';
+import DailyGloryModal from './components/DailyTracker/DailyGloryModal';
 import SettingsModal from './components/Settings/SettingsModal';
 import { useLearningState } from './hooks/useLearningState';
 
@@ -32,12 +33,15 @@ export default function App() {
     recordCheckIn,
     recordDrawingPractice,
     toggleFlashcardMastered,
+    claimDailyGlory,
     updateSettings,
     addCustomWord,
     addCustomSentence,
     resetProgress,
     newlyUnlockedBadge,
-    closeBadgeModal
+    closeBadgeModal,
+    isGloryModalOpen,
+    closeGloryModal
   } = useLearningState();
 
   return (
@@ -47,8 +51,11 @@ export default function App() {
         stars={state.stars}
         badgeCount={state.unlockedBadges.length}
         isMuted={state.settings.isMuted}
+        dailyQuests={state.dailyQuests}
+        gloryCount={state.gloryCount}
         onToggleMute={() => updateSettings({ isMuted: !state.settings.isMuted })}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenDailyTracker={() => setActiveTab('daily_tracker')}
       />
 
       {/* 模組切換頁籤列 */}
@@ -124,7 +131,7 @@ export default function App() {
           />
         )}
 
-        {/* 8. 每日打卡日曆 & Streak */}
+        {/* 8. 每日打卡日曆 & 待辦任務與每日榮耀 */}
         {activeTab === 'daily_tracker' && (
           <DailyTrackerView
             checkInDates={state.checkInDates}
@@ -134,7 +141,12 @@ export default function App() {
             completedSentences={state.completedSentences}
             drawingPracticeCount={state.drawingPracticeCount}
             flashcardMastered={state.flashcardMastered}
+            gloryCount={state.gloryCount}
+            gloryDates={state.gloryDates}
+            dailyQuests={state.dailyQuests}
             onCheckInToday={recordCheckIn}
+            onNavigate={(tab) => setActiveTab(tab)}
+            onClaimGlory={claimDailyGlory}
           />
         )}
 
@@ -147,6 +159,7 @@ export default function App() {
             completedSentences={state.completedSentences}
             spellingWinCount={state.spellingWinCount}
             quizCount={state.quizCount}
+            difficulty={state.settings.badgeDifficulty || 'easy'}
           />
         )}
       </main>
@@ -162,6 +175,13 @@ export default function App() {
         onClose={closeBadgeModal}
         badge={newlyUnlockedBadge}
         starsEarned={2}
+      />
+
+      {/* 👑 每日榮耀寶箱開箱彈窗 */}
+      <DailyGloryModal
+        isOpen={isGloryModalOpen}
+        onClose={closeGloryModal}
+        gloryCount={state.gloryCount}
       />
 
       {/* 家長與系統設定彈窗 */}

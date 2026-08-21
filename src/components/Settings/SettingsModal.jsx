@@ -275,6 +275,51 @@ export default function SettingsModal({
               </div>
             </div>
 
+            {/* 成就解鎖難度設定 */}
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-black text-gray-700 flex items-center gap-1">
+                  <span>🏆 成就解鎖難度：</span>
+                  <span className="text-amber-600 font-bold">
+                    {settings.badgeDifficulty === 'medium' ? '中 (進階 2倍)' : settings.badgeDifficulty === 'hard' ? '高 (大師 4倍)' : '低 (標準 1倍)'}
+                  </span>
+                </label>
+              </div>
+              <p className="text-[11px] text-gray-500 font-medium mb-3">
+                調整榮譽圖鑑徽章的解鎖目標數量，中難度為低難度的 2 倍，高難度為中難度的 2 倍 (4倍)。
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: 'easy', label: '低 (入門 1x)', sub: '標準目標', color: 'from-emerald-400 to-green-500' },
+                  { id: 'medium', label: '中 (進階 2x)', sub: '2倍目標', color: 'from-amber-400 to-orange-500' },
+                  { id: 'hard', label: '高 (大師 4x)', sub: '4倍目標', color: 'from-rose-400 to-red-500' },
+                ].map(item => {
+                  const isCurrent = (settings.badgeDifficulty || 'easy') === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        soundEffects.playBubble();
+                        onUpdateSettings({ badgeDifficulty: item.id });
+                        showToast(`✨ 成就難度已切換為：${item.label}`);
+                      }}
+                      className={`p-2.5 rounded-xl border text-center transition ${
+                        isCurrent
+                          ? `bg-gradient-to-r ${item.color} text-white font-black shadow-md border-transparent ring-2 ring-amber-300`
+                          : 'bg-white text-gray-700 border-gray-200 hover:bg-amber-50/60 font-bold'
+                      }`}
+                    >
+                      <span className="text-xs block">{item.label}</span>
+                      <span className={`text-[10px] block mt-0.5 ${isCurrent ? 'text-white/80' : 'text-gray-400'}`}>
+                        {item.sub}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* 音效開關 */}
             <div className="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-200">
               <span className="text-xs font-black text-gray-700">遊戲音效與鼓勵音樂</span>

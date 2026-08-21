@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Calendar as CalendarIcon, Flame, Star, Trophy, Sparkles, CheckCircle2, Award, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar as CalendarIcon, Flame, Star, Trophy, Sparkles, CheckCircle2, Award, ChevronLeft, ChevronRight, Crown } from 'lucide-react';
 import { soundEffects } from '../../utils/soundEffects';
+import DailyTodoList from './DailyTodoList';
 
 export default function DailyTrackerView({
   checkInDates = [],
@@ -10,7 +11,12 @@ export default function DailyTrackerView({
   completedSentences = [],
   drawingPracticeCount = 0,
   flashcardMastered = [],
-  onCheckInToday
+  gloryCount = 0,
+  gloryDates = [],
+  dailyQuests = {},
+  onCheckInToday,
+  onNavigate,
+  onClaimGlory
 }) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -37,19 +43,33 @@ export default function DailyTrackerView({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-2 animate-fadeIn">
-      {/* 頂部打卡與連續天數 Streak 橫幅 */}
-      <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-r from-orange-400 via-rose-500 to-amber-500 text-white shadow-xl mb-6 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div className="w-full max-w-4xl mx-auto px-4 py-2 flex flex-col gap-6 animate-fadeIn">
+      {/* 🌟 1. 置頂：今日冒險待辦清單與榮耀寶箱 */}
+      <DailyTodoList
+        dailyQuests={dailyQuests}
+        onNavigate={onNavigate}
+        onClaimGlory={onClaimGlory}
+      />
+
+      {/* 🌟 2. 每日打卡與連續天數 Streak 橫幅 */}
+      <div className="p-6 md:p-8 rounded-3xl bg-gradient-to-r from-orange-400 via-rose-500 to-amber-500 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
         {/* 左側連續天數火花 */}
         <div className="flex items-center gap-4 text-center md:text-left">
           <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-4xl shadow-inner animate-bounceSmall">
             🔥
           </div>
           <div>
-            <span className="text-xs font-black text-yellow-200 tracking-wider block">
-              DAILY PRACTICE STREAK
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black text-yellow-200 tracking-wider block">
+                DAILY PRACTICE STREAK
+              </span>
+              {gloryCount > 0 && (
+                <span className="bg-yellow-300 text-amber-950 text-[10px] px-2 py-0.5 rounded-full font-black flex items-center gap-1 shadow-sm">
+                  <Crown size={12} /> {gloryCount} 座王冠
+                </span>
+              )}
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black flex items-center gap-2 mt-0.5">
               <span>已連續學習</span>
               <span className="text-yellow-300 underline decoration-wavy decoration-yellow-400">
                 {streakCount}
@@ -57,7 +77,7 @@ export default function DailyTrackerView({
               <span>天！</span>
             </h2>
             <p className="text-white/90 text-xs font-semibold mt-1">
-              每天持續練習，點亮金色星星，解鎖專屬成就！
+              每天持續練習，點亮金色星星與榮耀王冠，解鎖專屬成就！
             </p>
           </div>
         </div>
@@ -91,13 +111,13 @@ export default function DailyTrackerView({
             )}
           </button>
           <span className="text-[11px] text-white/80 font-bold mt-1.5">
-            累計打卡：{checkInDates.length} 天
+            累計打卡：{checkInDates.length} 天 • 榮耀日：{gloryDates.length} 天
           </span>
         </div>
       </div>
 
-      {/* 學習數據四宮格 */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      {/* 🌟 3. 學習數據四宮格 */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-4 bg-white rounded-2xl shadow-sm border border-amber-100 text-center">
           <span className="text-xs font-bold text-gray-500">已學會單字</span>
           <p className="text-2xl font-black text-amber-600 mt-1">{completedWords.length} 個</p>
@@ -111,19 +131,19 @@ export default function DailyTrackerView({
           <p className="text-2xl font-black text-sky-600 mt-1">{drawingPracticeCount} 次</p>
         </div>
         <div className="p-4 bg-white rounded-2xl shadow-sm border border-purple-100 text-center">
-          <span className="text-xs font-bold text-gray-500">朗讀過句子</span>
-          <p className="text-2xl font-black text-purple-600 mt-1">{completedSentences.length} 句</p>
+          <span className="text-xs font-bold text-gray-500">榮耀王冠數</span>
+          <p className="text-2xl font-black text-purple-600 mt-1">{gloryCount} 座 👑</p>
         </div>
       </div>
 
-      {/* 打卡月曆卡片 */}
+      {/* 🌟 4. 打卡與榮耀月曆卡片 */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border-3 border-amber-100">
         {/* 月曆標題與切換 */}
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <CalendarIcon className="text-amber-500" size={24} />
             <h3 className="text-xl font-black text-gray-800">
-              {year} 年 {month + 1} 月 學習打卡日曆
+              {year} 年 {month + 1} 月 學習打卡與榮耀日曆
             </h3>
           </div>
 
@@ -166,13 +186,16 @@ export default function DailyTrackerView({
             const dayNum = idx + 1;
             const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
             const isChecked = checkInDates.includes(dateKey);
+            const isGloryDay = gloryDates.includes(dateKey);
             const isToday = dateKey === todayStr;
 
             return (
               <div
                 key={dayNum}
                 className={`h-14 sm:h-16 rounded-2xl flex flex-col items-center justify-between p-1.5 border transition ${
-                  isChecked
+                  isGloryDay
+                    ? 'bg-gradient-to-b from-amber-100 to-yellow-50 border-amber-400 shadow-md ring-2 ring-amber-300'
+                    : isChecked
                     ? 'bg-amber-50 border-amber-300 shadow-sm ring-1 ring-amber-200'
                     : isToday
                     ? 'bg-rose-50/60 border-rose-300 ring-2 ring-rose-200'
@@ -180,7 +203,7 @@ export default function DailyTrackerView({
                 }`}
               >
                 <div className="w-full flex justify-between items-center text-xs font-bold">
-                  <span className={isToday ? 'text-rose-600 font-black' : isChecked ? 'text-amber-800' : 'text-gray-600'}>
+                  <span className={isToday ? 'text-rose-600 font-black' : isGloryDay ? 'text-amber-950 font-black' : isChecked ? 'text-amber-800' : 'text-gray-600'}>
                     {dayNum}
                   </span>
                   {isToday && (
@@ -190,9 +213,13 @@ export default function DailyTrackerView({
                   )}
                 </div>
 
-                {isChecked ? (
+                {isGloryDay ? (
+                  <div className="my-auto flex items-center justify-center animate-bounceSmall text-base">
+                    👑
+                  </div>
+                ) : isChecked ? (
                   <div className="my-auto flex items-center justify-center animate-bounceSmall">
-                    <Star size={20} className="text-amber-400 fill-amber-400" />
+                    <Star size={18} className="text-amber-400 fill-amber-400" />
                   </div>
                 ) : (
                   <div className="my-auto text-gray-200 text-xs font-bold">
