@@ -1,0 +1,84 @@
+// 星星成就與圖鑑獎勵資料庫
+
+export const BADGES = [
+  {
+    id: 'first_word',
+    name: '注音小萌新',
+    icon: '🌱',
+    color: 'from-emerald-400 to-green-500',
+    description: '完成第 1 個單字發音或拼音學習！',
+    conditionType: 'word_count',
+    target: 1,
+    cheer: '恭喜踏出冒險的第一步！注音小精靈為你鼓掌！'
+  },
+  {
+    id: 'word_master_5',
+    name: '單字小探險家',
+    icon: '🧭',
+    color: 'from-blue-400 to-cyan-500',
+    description: '成功學會 5 個單字！',
+    conditionType: 'word_count',
+    target: 5,
+    cheer: '太棒了！你的單字寶庫越來越豐富了！'
+  },
+  {
+    id: 'word_master_15',
+    name: '注音萬事通',
+    icon: '👑',
+    color: 'from-amber-400 to-yellow-500',
+    description: '成功學會 15 個單字！',
+    conditionType: 'word_count',
+    target: 15,
+    cheer: '太厲害了！你已經是注音小博士囉！'
+  },
+  {
+    id: 'first_sentence',
+    name: '朗讀小明星',
+    icon: '🎤',
+    color: 'from-purple-400 to-pink-500',
+    description: '完成第 1 個完整句子卡拉OK朗讀！',
+    conditionType: 'sentence_count',
+    target: 1,
+    cheer: '哇！你的聲音清脆又宏亮，真有精神！'
+  },
+  {
+    id: 'sentence_master_5',
+    name: '故事朗讀家',
+    icon: '📖',
+    color: 'from-rose-400 to-red-500',
+    description: '朗讀完成 5 個完整句子！',
+    conditionType: 'sentence_count',
+    target: 5,
+    cheer: '超有節奏感！你唸故事的樣子太帥氣了！'
+  },
+  {
+    id: 'stars_10',
+    name: '星光收藏家',
+    icon: '⭐',
+    color: 'from-yellow-300 to-amber-500',
+    description: '累積收集 10 顆金色星星！',
+    conditionType: 'stars_count',
+    target: 10,
+    cheer: '閃閃發光的星星照亮了冒險島！'
+  },
+  {
+    id: 'quiz_master',
+    name: '每日挑戰王',
+    icon: '⚡',
+    color: 'from-violet-400 to-indigo-500',
+    description: '完成 1 次每日挑戰測驗！',
+    conditionType: 'quiz_count',
+    target: 1,
+    cheer: '答題速度又快又準，挑戰王非你莫屬！'
+  },
+  {
+    id: 'spelling_ace',
+    name: '拼音快手',
+    icon: '🧩',
+    color: 'from-teal-400 to-cyan-600',
+    description: '完成 3 次注音拼拼樂遊戲！',
+    conditionType: 'spelling_count',
+    target: 3,
+    cheer: '聲母韻母手到擒來，拼字無敵！'
+  }
+];

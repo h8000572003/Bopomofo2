@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#FFFDF9] text-gray-800 font-bubble selection:bg-pink-200 select-none;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* 隱藏預設捲軸但保持滾動 */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 漸變發光邊框與動畫 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* 國小注音字型與對齊美化 */
+ruby {
+  ruby-align: center;
+  ruby-position: right;
+}
+
+rt {
+  font-family: 'Zen Maru Gothic', 'BiauKai', 'DFKai-SB', 'Microsoft JhengHei', sans-serif;
+  letter-spacing: 0.05em;
+  font-size: 0.45em;
+}
