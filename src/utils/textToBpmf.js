@@ -43,6 +43,8 @@ export function convertTextToBpmfTokens(sentenceText) {
   return tokens;
 }
 
+export const textToBpmfTokens = convertTextToBpmfTokens;
+
 /**
  * 將長篇新聞或文章智慧斷句為多個短句
  * @param {string} rawText 新聞純文字

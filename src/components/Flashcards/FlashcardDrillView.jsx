@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { Sparkles, Star, Volume2, Mic, RotateCw, ArrowLeft, ArrowRight, Shuffle, CheckCircle2, RotateCcw, BookOpen } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Sparkles, Star, Volume2, Mic, RotateCw, ArrowLeft, ArrowRight, Shuffle, CheckCircle2, RotateCcw, BookOpen, Volume1 } from 'lucide-react';
 import { TOPICS } from '../../data/topicsData';
 import BopomofoRuby from '../Common/BopomofoRuby';
-import AudioButton from '../Common/AudioButton';
-import MicRecorder from '../Common/MicRecorder';
+import { textToBpmfTokens } from '../../utils/textToBpmf';
 import { speechHelper } from '../../utils/speechHelper';
 import { soundEffects } from '../../utils/soundEffects';
 import { useSpeech } from '../../hooks/useSpeech';
@@ -41,6 +40,12 @@ export default function FlashcardDrillView({
   const currentCard = activeWordsList[currentIndex % activeWordsList.length];
   const isCurrentMastered = currentCard ? masteredWords.includes(currentCard.id) : false;
 
+  // 自動為例句剖析台灣教育部標準注音標記
+  const sentenceTokens = useMemo(() => {
+    if (!currentCard?.exampleSentence) return [];
+    return textToBpmfTokens(currentCard.exampleSentence);
+  }, [currentCard?.exampleSentence]);
+
   // 翻轉卡片
   const handleFlipCard = () => {
     soundEffects.playBubble();
@@ -69,11 +74,19 @@ export default function FlashcardDrillView({
     setCurrentIndex(randIdx);
   };
 
-  // 播放單字發音
+  // 播放單字發音 (全詞)
   const handlePlayWord = () => {
     if (currentCard) {
+      soundEffects.playBubble();
       speakText(currentCard.hanzi, { rate: speechRate });
     }
+  };
+
+  // 播放單個漢字發音
+  const handlePlaySingleChar = (charObj) => {
+    soundEffects.playBubble();
+    // 朗讀該字發音
+    speakText(charObj.char, { rate: speechRate });
   };
 
   return (
@@ -92,7 +105,7 @@ export default function FlashcardDrillView({
               </span>
             </div>
             <p className="text-white/90 text-sm mt-1 font-medium">
-              點擊卡片 3D 翻轉，正反面對照，隨心翻卡背單字！
+              點擊正面單字可聽個別發音，3D 翻轉查看圖解與全注音例句！
             </p>
           </div>
         </div>
@@ -150,7 +163,7 @@ export default function FlashcardDrillView({
           <div
             onClick={handleFlipCard}
             style={{ perspective: '1000px' }}
-            className="w-full max-w-lg h-[380px] sm:h-[420px] cursor-pointer group select-none"
+            className="w-full max-w-lg min-h-[410px] sm:min-h-[440px] cursor-pointer group select-none"
           >
             <div
               style={{
@@ -158,31 +171,49 @@ export default function FlashcardDrillView({
                 transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
                 transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
               }}
-              className="relative w-full h-full"
+              className="relative w-full min-h-[410px] sm:min-h-[440px]"
             >
-              {/* 正面：超大漢字 + 國小標準注音 */}
+              {/* 🌟 正面：超大漢字 + 國小標準注音 + 單字獨立點讀 */}
               <div
                 style={{ backfaceVisibility: 'hidden' }}
-                className="absolute inset-0 w-full h-full bg-white rounded-3xl p-8 shadow-2xl border-4 border-amber-200 flex flex-col items-center justify-between hover:border-amber-300 transition-colors"
+                className="absolute inset-0 w-full h-full bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-amber-200 flex flex-col items-center justify-between hover:border-amber-300 transition-colors"
               >
                 <div className="w-full flex justify-between items-center text-xs font-black text-amber-700 bg-amber-50 px-3 py-1.5 rounded-xl">
-                  <span>正面：漢字與注音</span>
+                  <span>正面：漢字與注音（點字聽單字音）</span>
                   <span className="flex items-center gap-1 text-orange-500">
                     <RotateCw size={14} className="animate-spin" />
                     點擊翻轉背面
                   </span>
                 </div>
 
-                {/* 漢字 + 注音展示 */}
-                <div className="flex items-center justify-center gap-4 my-auto">
-                  {currentCard.characters.map((c, idx) => (
-                    <BopomofoRuby
-                      key={idx}
-                      char={c.char}
-                      bopomofo={c.bopomofo}
-                      size="xl"
-                    />
-                  ))}
+                {/* 漢字 + 注音展示（各字支援獨立點擊發音） */}
+                <div className="flex flex-col items-center my-auto py-2">
+                  <div className="flex items-center justify-center gap-4 sm:gap-6">
+                    {currentCard.characters.map((c, idx) => (
+                      <div
+                        key={idx}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePlaySingleChar(c);
+                        }}
+                        title={`點擊朗讀單字「${c.char}」`}
+                        className="group/char relative flex flex-col items-center p-3 sm:p-4 rounded-3xl bg-amber-50/70 hover:bg-amber-100/80 border-2 border-amber-200 hover:border-amber-400 transition-all transform hover:scale-108 active:scale-95 shadow-sm hover:shadow-md cursor-pointer"
+                      >
+                        <BopomofoRuby
+                          char={c.char}
+                          bopomofo={c.bopomofo}
+                          size="xl"
+                        />
+                        <span className="mt-2 flex items-center gap-1 text-[11px] font-black text-amber-700 bg-white/90 px-2 py-0.5 rounded-full shadow-2xs group-hover/char:text-amber-900">
+                          <Volume1 size={13} className="text-amber-500" />
+                          <span>單字音</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <span className="text-[11px] text-amber-800/80 font-bold mt-3 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
+                    👆 點擊上方各字可單獨聽「單字發音」
+                  </span>
                 </div>
 
                 {/* 底部發音控制 */}
@@ -195,16 +226,16 @@ export default function FlashcardDrillView({
                     className="flex items-center gap-1.5 px-5 py-2.5 bg-bubble-pink hover:bg-pink-600 text-white font-black text-sm rounded-2xl shadow-md transition transform active:scale-95"
                   >
                     <Volume2 size={18} />
-                    <span>聽發音</span>
+                    <span>🔊 聽完整單字</span>
                   </button>
 
                   <span className="text-xs text-gray-400 font-bold">
-                    點擊任意處翻轉查看圖解 ➔
+                    點擊卡片空白處翻轉 ➔
                   </span>
                 </div>
               </div>
 
-              {/* 背面：Emoji 圖解、拼音拆解、例句 */}
+              {/* 🌟 背面：Emoji 圖解、釋義、全注音標註例句 */}
               <div
                 style={{
                   backfaceVisibility: 'hidden',
@@ -213,7 +244,7 @@ export default function FlashcardDrillView({
                 className="absolute inset-0 w-full h-full bg-gradient-to-br from-amber-50 via-rose-50 to-orange-50 rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-rose-300 flex flex-col items-center justify-between"
               >
                 <div className="w-full flex justify-between items-center text-xs font-black text-rose-800 bg-rose-100 px-3 py-1.5 rounded-xl">
-                  <span>背面：圖解與例句</span>
+                  <span>背面：圖解與全注音例句</span>
                   <span className="flex items-center gap-1 text-rose-600">
                     <RotateCw size={14} />
                     點擊翻回正面
@@ -221,31 +252,46 @@ export default function FlashcardDrillView({
                 </div>
 
                 {/* 大 Emoji 與意義 */}
-                <div className="flex flex-col items-center my-auto">
-                  <span className="text-7xl mb-2 animate-bounceSmall">{currentCard.emoji}</span>
+                <div className="flex flex-col items-center my-auto py-1">
+                  <span className="text-6xl sm:text-7xl mb-1.5 animate-bounceSmall">{currentCard.emoji}</span>
                   <h3 className="text-2xl font-black text-gray-800">{currentCard.hanzi}</h3>
-                  <p className="text-sm font-black text-rose-500 mt-1 tracking-wider">
-                    {currentCard.bpmfFull || currentCard.characters.map(c => c.bopomofo).join(' ')} <span className="text-gray-400 font-normal">|</span> <span className="text-gray-600 font-semibold">{currentCard.meaning}</span>
+                  <p className="text-xs sm:text-sm font-black text-rose-600 mt-1 tracking-wider">
+                    {currentCard.bpmfFull || currentCard.characters.map(c => c.bopomofo).join(' ')} <span className="text-gray-300 font-normal">|</span> <span className="text-gray-700 font-semibold">{currentCard.meaning}</span>
                   </p>
                 </div>
 
-                {/* 例句區 */}
+                {/* 🌟 例句區：全面加入台灣教育部標準注音 Ruby */}
                 {currentCard.exampleSentence && (
-                  <div className="w-full p-3 bg-white/90 rounded-2xl border border-rose-200 flex items-center justify-between gap-2 shadow-sm">
-                    <div className="text-left flex-1">
-                      <span className="text-[10px] font-black text-rose-500 block">實用例句：</span>
-                      <p className="text-xs font-bold text-gray-800">{currentCard.exampleSentence}</p>
+                  <div className="w-full p-3.5 bg-white/95 rounded-2xl border-2 border-rose-200 flex flex-col gap-2 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-black text-rose-600 flex items-center gap-1">
+                        <BookOpen size={14} /> 實用例句（附標準注音）：
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          soundEffects.playBubble();
+                          speakText(currentCard.exampleSentence, { rate: 0.8 });
+                        }}
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-700 font-black text-xs transition"
+                        title="朗讀例句"
+                      >
+                        <Volume2 size={14} />
+                        <span>朗讀例句</span>
+                      </button>
                     </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        speakText(currentCard.exampleSentence, { rate: 0.8 });
-                      }}
-                      className="p-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition"
-                      title="朗讀例句"
-                    >
-                      <Volume2 size={16} />
-                    </button>
+
+                    {/* 例句全注音 Ruby 渲染 */}
+                    <div className="flex flex-wrap items-center justify-start gap-x-2 gap-y-1 py-1 px-1 bg-rose-50/50 rounded-xl border border-rose-100">
+                      {sentenceTokens.map((token, idx) => (
+                        <BopomofoRuby
+                          key={idx}
+                          char={token.char}
+                          bopomofo={token.bopomofo}
+                          size="sm"
+                        />
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
