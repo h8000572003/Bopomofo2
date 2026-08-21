@@ -30,7 +30,7 @@ export default function KaraokePlayer({
     if (isPlaying) {
       stopSpeaking();
     } else {
-      speakKaraoke(sentence.text, { rate: speechRate });
+      speakKaraoke(sentence.text, { rate: speechRate, tokens: sentence.tokens });
     }
   };
 

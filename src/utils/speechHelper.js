@@ -7,6 +7,7 @@ class SpeechHelper {
     this.twVoice = null;
     this.recognition = null;
     this.isListening = false;
+    this.currentKaraokeTimer = null;
 
     if (this.synth) {
       this.initVoices();
@@ -34,13 +35,13 @@ class SpeechHelper {
 
   // 1. 朗讀文字 (單字、注音或自訂文字)
   speakText(text, options = {}) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (!this.synth) {
         resolve();
         return;
       }
 
-      this.synth.cancel(); // 停止目前所有朗讀
+      this.stopSpeaking(); // 停止目前所有朗讀與卡拉OK計時器
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = options.rate || 0.85; // 稍慢適合小朋友聽清楚
@@ -64,7 +65,7 @@ class SpeechHelper {
     });
   }
 
-  // 2. 句子卡拉OK逐字高亮朗讀
+  // 2. 句子卡拉OK精準逐字高亮朗讀 (消除衝突亂跳，保證平滑單向推進)
   speakSentenceWithKaraoke(sentenceText, options = {}, onHighlightIndex = () => {}) {
     return new Promise((resolve) => {
       if (!this.synth) {
@@ -72,7 +73,7 @@ class SpeechHelper {
         return;
       }
 
-      this.synth.cancel();
+      this.stopSpeaking();
 
       const utterance = new SpeechSynthesisUtterance(sentenceText);
       const rate = options.rate || 0.8;
@@ -87,40 +88,83 @@ class SpeechHelper {
         utterance.lang = 'zh-TW';
       }
 
-      let intervalId = null;
-      let currentIndex = 0;
-      const textLen = sentenceText.length;
-      
-      // 計算平均每個字的亮起時間 (毫秒)
-      const msPerChar = Math.max(220, Math.floor((360 / rate)));
+      // 取得精準 tokens 清單
+      const tokens = options.tokens || sentenceText.split('').map(c => ({ char: c }));
+      const tokenCount = tokens.length;
 
-      utterance.onstart = () => {
-        onHighlightIndex(0);
-        intervalId = setInterval(() => {
-          currentIndex++;
-          if (currentIndex < textLen) {
-            onHighlightIndex(currentIndex);
+      // 建立基於語速與標點符號停頓的精確時間軸
+      // 基準單字時長：rate 0.8 約 270ms，rate 1.0 約 220ms，rate 0.6 約 360ms
+      const baseCharMs = Math.max(200, Math.round(220 / rate));
+      const timeline = [];
+      let accumulatedMs = 0;
+
+      tokens.forEach((t, i) => {
+        timeline.push({ index: i, startMs: accumulatedMs });
+        if (/[，、]/.test(t.char)) {
+          accumulatedMs += Math.round(baseCharMs * 0.7) + 180; // 逗號自然停頓
+        } else if (/[。！？]/.test(t.char)) {
+          accumulatedMs += Math.round(baseCharMs * 0.7) + 240; // 句號自然停頓
+        } else {
+          accumulatedMs += baseCharMs;
+        }
+      });
+
+      let startTime = null;
+      let animFrameId = null;
+      let lastReportedIndex = -1;
+
+      const updateKaraoke = () => {
+        if (!startTime) return;
+        const elapsed = performance.now() - startTime;
+
+        // 找出目前時間點所對應的 token index
+        let activeIdx = 0;
+        for (let i = 0; i < timeline.length; i++) {
+          if (elapsed >= timeline[i].startMs) {
+            activeIdx = timeline[i].index;
           } else {
-            clearInterval(intervalId);
+            break;
           }
-        }, msPerChar);
-      };
+        }
 
-      // 支援原生邊界事件 (若瀏覽器支援)
-      utterance.onboundary = (event) => {
-        if (event.name === 'word' || event.charIndex !== undefined) {
-          onHighlightIndex(event.charIndex);
+        // 單向遞增推進，絕不倒退或亂跳
+        if (activeIdx > lastReportedIndex && activeIdx < tokenCount) {
+          lastReportedIndex = activeIdx;
+          onHighlightIndex(activeIdx);
+        }
+
+        if (activeIdx < tokenCount - 1) {
+          animFrameId = requestAnimationFrame(updateKaraoke);
         }
       };
 
+      this.currentKaraokeTimer = () => {
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        startTime = null;
+      };
+
+      utterance.onstart = () => {
+        startTime = performance.now();
+        lastReportedIndex = 0;
+        onHighlightIndex(0);
+        animFrameId = requestAnimationFrame(updateKaraoke);
+      };
+
       utterance.onend = () => {
-        if (intervalId) clearInterval(intervalId);
-        onHighlightIndex(-1); // 重設
+        if (this.currentKaraokeTimer) {
+          this.currentKaraokeTimer();
+          this.currentKaraokeTimer = null;
+        }
+        onHighlightIndex(-1); // 重設高亮
         resolve();
       };
 
-      utterance.onerror = () => {
-        if (intervalId) clearInterval(intervalId);
+      utterance.onerror = (e) => {
+        console.warn('Karaoke speech error', e);
+        if (this.currentKaraokeTimer) {
+          this.currentKaraokeTimer();
+          this.currentKaraokeTimer = null;
+        }
         onHighlightIndex(-1);
         resolve();
       };
@@ -130,6 +174,10 @@ class SpeechHelper {
   }
 
   stopSpeaking() {
+    if (this.currentKaraokeTimer) {
+      this.currentKaraokeTimer();
+      this.currentKaraokeTimer = null;
+    }
     if (this.synth) {
       this.synth.cancel();
     }
@@ -206,7 +254,7 @@ class SpeechHelper {
       try {
         this.recognition.abort();
       } catch (e) {}
-      this.recognition = null;
+        this.recognition = null;
     }
     this.isListening = false;
   }

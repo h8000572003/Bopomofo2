@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { X, Settings, Volume2, Plus, Trash2, RotateCcw, Sparkles, Check, Mic } from 'lucide-react';
+import { X, Settings, Volume2, Plus, Trash2, RotateCcw, Sparkles, Check, Mic, Globe, Download, Upload, RefreshCw } from 'lucide-react';
 import { speechHelper } from '../../utils/speechHelper';
 import { soundEffects } from '../../utils/soundEffects';
 import { parseBopomofoString } from '../../utils/bopomofoHelper';
+import ScrollableMenuBar from '../Common/ScrollableMenuBar';
 
 export default function SettingsModal({
   isOpen,
   onClose,
   settings,
+  customTopics = [],
   onUpdateSettings,
   onAddCustomWord,
   onAddCustomSentence,
+  onImportCustomTopics,
   onResetProgress
 }) {
-  const [activeTab, setActiveTab] = useState('general'); // 'general' | 'custom_word' | 'custom_sentence'
+  const [activeTab, setActiveTab] = useState('general'); // 'general' | 'online_sync' | 'custom_word' | 'custom_sentence'
   const [voices, setVoices] = useState([]);
+
+  // 線上題庫 URL
+  const [onlineUrl, setOnlineUrl] = useState('');
+  const [isSyncing, setIsSyncing] = useState(false);
 
   // 自訂單字表單
   const [wordHanzi, setWordHanzi] = useState('');
@@ -40,7 +47,78 @@ export default function SettingsModal({
 
   const showToast = (msg) => {
     setToastMsg(msg);
-    setTimeout(() => setToastMsg(null), 2500);
+    setTimeout(() => setToastMsg(null), 3000);
+  };
+
+  // 1. 線上題庫 URL 一鍵下載同步
+  const handleOnlineSync = async (e) => {
+    e.preventDefault();
+    if (!onlineUrl.trim()) {
+      alert('請輸入題庫 JSON 網址！');
+      return;
+    }
+
+    setIsSyncing(true);
+    soundEffects.playBubble();
+
+    try {
+      const res = await fetch(onlineUrl.trim());
+      if (!res.ok) throw new Error(`HTTP 錯誤：${res.status}`);
+      const data = await res.json();
+
+      if (Array.isArray(data)) {
+        onImportCustomTopics && onImportCustomTopics(data);
+        soundEffects.playCorrect();
+        showToast('🎉 線上題庫同步成功！已載入最新單字與句子！');
+      } else if (data.topics && Array.isArray(data.topics)) {
+        onImportCustomTopics && onImportCustomTopics(data.topics);
+        soundEffects.playCorrect();
+        showToast('🎉 線上題庫同步成功！已載入最新單字與句子！');
+      } else {
+        throw new Error('題庫格式不正確，需為主題陣列！');
+      }
+    } catch (err) {
+      console.warn('Sync error', err);
+      soundEffects.playWrong();
+      showToast(`❌ 同步失敗：${err.message || '請確認網址與 CORS 權限'}`);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  // 2. 匯出題庫備份 JSON
+  const handleExportJson = () => {
+    soundEffects.playBubble();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(customTopics, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `注音冒險島_自訂題庫_${Date.now()}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    showToast('💾 題庫已成功匯出至下載資料夾！');
+  };
+
+  // 3. 匯入本機 JSON 題庫檔案
+  const handleFileUpload = (e) => {
+    const fileReader = new FileReader();
+    if (e.target.files && e.target.files[0]) {
+      fileReader.readAsText(e.target.files[0], "UTF-8");
+      fileReader.onload = (event) => {
+        try {
+          const parsed = JSON.parse(event.target.result);
+          if (Array.isArray(parsed)) {
+            onImportCustomTopics && onImportCustomTopics(parsed);
+            soundEffects.playCorrect();
+            showToast('🎉 題庫檔案匯入成功！');
+          } else {
+            showToast('❌ 題庫格式不符，需為主題陣列！');
+          }
+        } catch (err) {
+          showToast('❌ JSON 解析失敗，請確認檔案格式！');
+        }
+      };
+    }
   };
 
   // 提交新增自訂單字
@@ -106,14 +184,12 @@ export default function SettingsModal({
       id: `custom_s_${Date.now()}`,
       text: sentenceText,
       emoji: sentenceEmoji || '📖',
-      pinyin: sentencePinyin || '',
       tokens
     };
 
     onAddCustomSentence(newSentence);
     showToast('✨ 成功新增自訂句子！');
     setSentenceText('');
-    setSentencePinyin('');
   };
 
   return (
@@ -132,38 +208,34 @@ export default function SettingsModal({
           <div className="p-2 bg-amber-100 text-amber-700 rounded-2xl">
             <Settings size={22} />
           </div>
-          <h3 className="text-xl font-black text-gray-800">家長與學習設定</h3>
+          <h3 className="text-xl font-black text-gray-800">家長、設定與線上題庫</h3>
         </div>
 
-        {/* 標籤切換列 */}
-        <div className="flex gap-2 mb-6 border-b border-gray-100 pb-3">
-          <button
-            onClick={() => setActiveTab('general')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
-              activeTab === 'general' ? 'bg-amber-400 text-amber-950 shadow-sm' : 'bg-gray-100 text-gray-600'
-            }`}
-          >
-            語音與偏好
-          </button>
-          <button
-            onClick={() => setActiveTab('custom_word')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
-              activeTab === 'custom_word' ? 'bg-amber-400 text-amber-950 shadow-sm' : 'bg-gray-100 text-gray-600'
-            }`}
-          >
-            ➕ 自訂單字
-          </button>
-          <button
-            onClick={() => setActiveTab('custom_sentence')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
-              activeTab === 'custom_sentence' ? 'bg-amber-400 text-amber-950 shadow-sm' : 'bg-gray-100 text-gray-600'
-            }`}
-          >
-            ➕ 自訂句子
-          </button>
+        {/* 標籤切換列 (支援左右滑動箭頭) */}
+        <div className="mb-6 border-b border-gray-100 pb-3">
+          <ScrollableMenuBar>
+            {[
+              { id: 'general', label: '語音偏好' },
+              { id: 'online_sync', label: '🌐 線上更新' },
+              { id: 'custom_word', label: '➕ 自訂單字' },
+              { id: 'custom_sentence', label: '➕ 自訂句子' },
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-black whitespace-nowrap transition ${
+                  activeTab === tab.id
+                    ? 'bg-amber-400 text-amber-950 shadow-sm'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </ScrollableMenuBar>
         </div>
 
-        {/* 提示吐司訊息 */}
+        {/* 提示訊息 */}
         {toastMsg && (
           <div className="mb-4 p-3 bg-emerald-100 text-emerald-800 text-xs font-black rounded-xl text-center border border-emerald-300 animate-popIn">
             {toastMsg}
@@ -242,7 +314,66 @@ export default function SettingsModal({
           </div>
         )}
 
-        {/* 2. 新增自訂單字 */}
+        {/* 2. 🌐 線上題庫同步與備份 */}
+        {activeTab === 'online_sync' && (
+          <div className="flex flex-col gap-4">
+            {/* 遠端 URL 同步 */}
+            <form onSubmit={handleOnlineSync} className="p-4 bg-indigo-50/70 rounded-2xl border border-indigo-200">
+              <label className="text-xs font-black text-indigo-900 block mb-1.5 flex items-center gap-1">
+                <Globe size={16} />
+                <span>線上題庫 JSON 網址訂閱與同步</span>
+              </label>
+              <p className="text-[11px] text-indigo-700 font-semibold mb-2 leading-relaxed">
+                輸入學校、老師或自訂架設的題庫 JSON 網址（如 GitHub Raw 或 Gist），一鍵下載更新。
+              </p>
+              <input
+                type="url"
+                placeholder="https://example.com/bopomofo-questions.json"
+                value={onlineUrl}
+                onChange={(e) => setOnlineUrl(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-indigo-200 text-xs font-bold bg-white outline-none focus:ring-2 focus:ring-indigo-300 mb-2"
+              />
+              <button
+                type="submit"
+                disabled={isSyncing}
+                className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs shadow-md transition flex items-center justify-center gap-1.5"
+              >
+                <RefreshCw size={14} className={isSyncing ? 'animate-spin' : ''} />
+                <span>{isSyncing ? '正在同步題庫中...' : '一鍵從線上更新題庫 🚀'}</span>
+              </button>
+            </form>
+
+            {/* 本地檔案匯出與匯入 */}
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+              <span className="text-xs font-black text-gray-700 block mb-2">
+                📂 題庫備份與離線分享 (JSON)
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={handleExportJson}
+                  className="py-2.5 bg-white hover:bg-amber-50 border border-gray-200 text-amber-900 font-bold text-xs rounded-xl flex items-center justify-center gap-1 shadow-sm transition"
+                >
+                  <Download size={14} />
+                  <span>匯出題庫檔案</span>
+                </button>
+
+                <label className="py-2.5 bg-white hover:bg-blue-50 border border-gray-200 text-blue-900 font-bold text-xs rounded-xl flex items-center justify-center gap-1 shadow-sm cursor-pointer transition">
+                  <Upload size={14} />
+                  <span>匯入題庫檔案</span>
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 3. 新增自訂單字 */}
         {activeTab === 'custom_word' && (
           <form onSubmit={handleCreateWord} className="flex flex-col gap-3">
             <div>
@@ -312,7 +443,7 @@ export default function SettingsModal({
           </form>
         )}
 
-        {/* 3. 新增自訂句子 */}
+        {/* 4. 新增自訂句子 */}
         {activeTab === 'custom_sentence' && (
           <form onSubmit={handleCreateSentence} className="flex flex-col gap-3">
             <div>

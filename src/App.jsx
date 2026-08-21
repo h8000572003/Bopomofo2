@@ -5,6 +5,7 @@ import BopomofoBasicsView from './components/BopomofoBasics/BopomofoBasicsView';
 import FlashcardDrillView from './components/Flashcards/FlashcardDrillView';
 import WordExplorerView from './components/WordExplorer/WordExplorerView';
 import SentenceKaraokeView from './components/SentenceKaraoke/SentenceKaraokeView';
+import NewsReaderView from './components/NewsReader/NewsReaderView';
 import WordSpellingGameView from './components/WordSpellingGame/WordSpellingGameView';
 import DailyQuizView from './components/DailyQuiz/DailyQuizView';
 import DailyTrackerView from './components/DailyTracker/DailyTrackerView';
@@ -22,6 +23,10 @@ export default function App() {
     addStars,
     markWordCompleted,
     markSentenceCompleted,
+    markNewsCompleted,
+    addNewsItem,
+    batchAddNews,
+    importCustomTopics,
     recordSpellingWin,
     recordQuizCompleted,
     recordCheckIn,
@@ -91,7 +96,19 @@ export default function App() {
           />
         )}
 
-        {/* 5. 注音拼拼樂 */}
+        {/* 5. 📰 每日兒童新聞朗讀館 */}
+        {activeTab === 'news_reader' && (
+          <NewsReaderView
+            newsArticles={state.newsArticles}
+            completedNews={state.completedNews}
+            onNewsCompleted={markNewsCompleted}
+            onAddNewsItem={addNewsItem}
+            onBatchAddNews={batchAddNews}
+            speechRate={state.settings.speechRate}
+          />
+        )}
+
+        {/* 6. 注音拼拼樂 */}
         {activeTab === 'spelling_game' && (
           <WordSpellingGameView
             onGameWin={recordSpellingWin}
@@ -99,7 +116,7 @@ export default function App() {
           />
         )}
 
-        {/* 6. 每日挑戰 */}
+        {/* 7. 每日挑戰 */}
         {activeTab === 'daily_quiz' && (
           <DailyQuizView
             onQuizCompleted={recordQuizCompleted}
@@ -107,7 +124,7 @@ export default function App() {
           />
         )}
 
-        {/* 7. 每日打卡日曆 & Streak */}
+        {/* 8. 每日打卡日曆 & Streak */}
         {activeTab === 'daily_tracker' && (
           <DailyTrackerView
             checkInDates={state.checkInDates}
@@ -121,7 +138,7 @@ export default function App() {
           />
         )}
 
-        {/* 8. 榮譽圖鑑 */}
+        {/* 9. 榮譽圖鑑 */}
         {activeTab === 'badges' && (
           <BadgesGalleryView
             unlockedBadges={state.unlockedBadges}
@@ -136,7 +153,7 @@ export default function App() {
 
       {/* 頁尾版權與打氣話語 */}
       <footer className="py-4 text-center text-xs text-gray-400 border-t border-amber-100/60">
-        <p>🎒 注音冒險島 • 為孩子量身打造的注音、字卡與句子朗讀學習遊樂場 ✨</p>
+        <p>🎒 注音冒險島 • 為孩子量身打造的注音、時事新聞與句子朗讀學習遊樂場 ✨</p>
       </footer>
 
       {/* 徽章解鎖慶祝彈窗 */}
@@ -152,9 +169,11 @@ export default function App() {
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
         settings={state.settings}
+        customTopics={state.customTopics}
         onUpdateSettings={updateSettings}
         onAddCustomWord={addCustomWord}
         onAddCustomSentence={addCustomSentence}
+        onImportCustomTopics={importCustomTopics}
         onResetProgress={resetProgress}
       />
     </div>

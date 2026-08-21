@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { BADGES } from '../data/badgesData';
 import { soundEffects } from '../utils/soundEffects';
 
-const STORAGE_KEY = 'BOPOMOFO_ADVENTURE_STATE_V2';
+const STORAGE_KEY = 'BOPOMOFO_ADVENTURE_STATE_V3';
 
 const getTodayString = () => {
   const d = new Date();
@@ -16,6 +16,7 @@ const defaultState = {
   stars: 0,
   completedWords: [],
   completedSentences: [],
+  completedNews: [],
   unlockedBadges: [],
   spellingWinCount: 0,
   quizCount: 0,
@@ -25,6 +26,7 @@ const defaultState = {
   streakCount: 0,
   lastCheckInDate: null,
   customTopics: [],
+  newsArticles: [],
   settings: {
     speechRate: 0.85,
     isMuted: false,
@@ -73,7 +75,7 @@ export function useLearningState() {
       if (badge.conditionType === 'word_count') {
         isConditionMet = (updatedState.completedWords.length >= badge.target);
       } else if (badge.conditionType === 'sentence_count') {
-        isConditionMet = (updatedState.completedSentences.length >= badge.target);
+        isConditionMet = (updatedState.completedSentences.length + (updatedState.completedNews?.length || 0) >= badge.target);
       } else if (badge.conditionType === 'stars_count') {
         isConditionMet = (updatedState.stars >= badge.target);
       } else if (badge.conditionType === 'spelling_count') {
@@ -108,10 +110,9 @@ export function useLearningState() {
     const today = getTodayString();
     setState(prev => {
       if (prev.checkInDates?.includes(today)) {
-        return prev; // 今日已打卡
+        return prev;
       }
 
-      // 計算連續天數 Streak
       const lastDate = prev.lastCheckInDate;
       let newStreak = 1;
       if (lastDate) {
@@ -137,7 +138,7 @@ export function useLearningState() {
     });
   };
 
-  // 自動在完成練習時檢查打卡
+  // 自動打卡輔助
   const triggerAutoCheckIn = (currentState) => {
     const today = getTodayString();
     if (!currentState.checkInDates?.includes(today)) {
@@ -163,6 +164,55 @@ export function useLearningState() {
       };
     }
     return currentState;
+  };
+
+  // 標記新聞朗讀完成
+  const markNewsCompleted = (newsId, earnedStars = 2) => {
+    setState(prev => {
+      const isNew = !prev.completedNews?.includes(newsId);
+      const newCompleted = isNew ? [...(prev.completedNews || []), newsId] : prev.completedNews;
+      const newStars = prev.stars + earnedStars;
+      soundEffects.playStarWin();
+      const updated = {
+        ...prev,
+        completedNews: newCompleted,
+        stars: newStars
+      };
+      return checkBadges(triggerAutoCheckIn(updated));
+    });
+  };
+
+  // 新增單一新聞
+  const addNewsItem = (newsItem) => {
+    setState(prev => {
+      const updated = {
+        ...prev,
+        newsArticles: [newsItem, ...(prev.newsArticles || [])]
+      };
+      return updated;
+    });
+  };
+
+  // 批次新增即時新聞
+  const batchAddNews = (newsItems) => {
+    setState(prev => {
+      const existingIds = new Set((prev.newsArticles || []).map(n => n.id));
+      const freshOnly = newsItems.filter(n => !existingIds.has(n.id));
+      return {
+        ...prev,
+        newsArticles: [...freshOnly, ...(prev.newsArticles || [])]
+      };
+    });
+  };
+
+  // 匯入自訂/線上主題庫
+  const importCustomTopics = (newTopics) => {
+    setState(prev => {
+      return {
+        ...prev,
+        customTopics: newTopics
+      };
+    });
   };
 
   // 記錄手寫描紅練習
@@ -357,6 +407,10 @@ export function useLearningState() {
     addStars,
     markWordCompleted,
     markSentenceCompleted,
+    markNewsCompleted,
+    addNewsItem,
+    batchAddNews,
+    importCustomTopics,
     recordSpellingWin,
     recordQuizCompleted,
     recordCheckIn,

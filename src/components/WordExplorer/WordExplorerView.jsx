@@ -5,6 +5,7 @@ import WordDetailModal from './WordDetailModal';
 import { speechHelper } from '../../utils/speechHelper';
 import { soundEffects } from '../../utils/soundEffects';
 import { Sparkles, Search, Compass } from 'lucide-react';
+import ScrollableMenuBar from '../Common/ScrollableMenuBar';
 
 export default function WordExplorerView({
   completedWords = [],
@@ -66,32 +67,34 @@ export default function WordExplorerView({
         </div>
       </div>
 
-      {/* 主題標籤切換列 */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 scrollbar-none scroll-smooth">
-        {allTopics.map(topic => {
-          const isSelected = selectedTopicId === topic.id;
-          return (
-            <button
-              key={topic.id}
-              onClick={() => {
-                soundEffects.playBubble();
-                setSelectedTopicId(topic.id);
-                setSearchTerm('');
-              }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl font-black text-sm whitespace-nowrap transition duration-150 transform ${
-                isSelected
-                  ? 'bg-bubble-purple text-white shadow-md scale-105 ring-2 ring-purple-200'
-                  : 'bg-white text-gray-700 hover:bg-purple-50 border border-gray-200 hover:scale-102'
-              }`}
-            >
-              <span className="text-lg">{topic.icon}</span>
-              <span>{topic.name}</span>
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'}`}>
-                {topic.words?.length || 0}
-              </span>
-            </button>
-          );
-        })}
+      {/* 主題標籤切換列 (支援左右滑動箭頭) */}
+      <div className="mb-6">
+        <ScrollableMenuBar>
+          {allTopics.map(topic => {
+            const isSelected = selectedTopicId === topic.id;
+            return (
+              <button
+                key={topic.id}
+                onClick={() => {
+                  soundEffects.playBubble();
+                  setSelectedTopicId(topic.id);
+                  setSearchTerm('');
+                }}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl font-black text-sm whitespace-nowrap transition duration-150 transform ${
+                  isSelected
+                    ? 'bg-bubble-purple text-white shadow-md scale-105 ring-2 ring-purple-200'
+                    : 'bg-white text-gray-700 hover:bg-purple-50 border border-gray-200 hover:scale-102'
+                }`}
+              >
+                <span className="text-lg">{topic.icon}</span>
+                <span>{topic.name}</span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isSelected ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                  {topic.words?.length || 0}
+                </span>
+              </button>
+            );
+          })}
+        </ScrollableMenuBar>
       </div>
 
       {/* 單字卡片網格 */}
