@@ -145,6 +145,43 @@ export function useLearningState() {
     return updatedState;
   };
 
+  // 深模組：套用一次進度事件——computeFn 決定「狀態怎麼改、加幾顆星、要不要播音效」，
+  // 這裡統一處理「補每日任務結構→套用結果→視需要累加每日任務計數→檢查徽章→自動打卡」共用尾段。
+  // computeFn(ensured) => { patch, stars = 0, sound = null }
+  const recordEvent = (prev, computeFn, { questField = null } = {}) => {
+    const ensured = ensureTodayQuests(prev);
+    const { patch, stars = 0, sound = null } = computeFn(ensured);
+
+    if (sound) sound();
+
+    const updatedQuests = questField
+      ? { ...ensured.dailyQuests, [questField]: (ensured.dailyQuests[questField] || 0) + 1 }
+      : ensured.dailyQuests;
+
+    const updated = {
+      ...ensured,
+      ...patch,
+      stars: ensured.stars + stars,
+      dailyQuests: updatedQuests
+    };
+
+    return checkBadges(triggerAutoCheckIn(updated));
+  };
+
+  // recordEvent 之上的加層：id 清單去重＋只在第一次完成時發獎勵（見架構檢視候選 1）
+  // sound 可以是 (isNew) => void，讓呼叫端自行決定音效是否也要只在第一次播放
+  const recordCompletion = (prev, listKey, id, { stars = 0, questField = null, sound = null } = {}) => {
+    return recordEvent(prev, (ensured) => {
+      const list = ensured[listKey] || [];
+      const isNew = !list.includes(id);
+      return {
+        patch: { [listKey]: isNew ? [...list, id] : list },
+        stars: isNew ? stars : 0,
+        sound: sound ? () => sound(isNew) : null
+      };
+    }, { questField });
+  };
+
   // 每日打卡處理
   const recordCheckIn = () => {
     const today = getTodayString();
@@ -213,7 +250,7 @@ export function useLearningState() {
       const ensured = ensureTodayQuests(prev);
       if (ensured.dailyQuests.isGloryClaimed) return prev;
 
-      soundEffects.playVictoryFanfare();
+      soundEffects.playFanfare();
       const updatedQuests = { ...ensured.dailyQuests, isGloryClaimed: true };
       const updatedGloryDates = ensured.gloryDates?.includes(today)
         ? ensured.gloryDates
@@ -234,136 +271,66 @@ export function useLearningState() {
 
   // 記錄手寫描紅練習
   const recordDrawingPractice = (symbol) => {
-    setState(prev => {
-      const ensured = ensureTodayQuests(prev);
-      soundEffects.playCorrect();
-      const updatedQuests = {
-        ...ensured.dailyQuests,
-        drawingCount: (ensured.dailyQuests.drawingCount || 0) + 1
-      };
-      const updated = {
-        ...ensured,
-        stars: ensured.stars + 1,
-        drawingPracticeCount: (ensured.drawingPracticeCount || 0) + 1,
-        dailyQuests: updatedQuests
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
+    setState(prev => recordEvent(prev, (ensured) => ({
+      patch: { drawingPracticeCount: (ensured.drawingPracticeCount || 0) + 1 },
+      stars: 1,
+      sound: () => soundEffects.playCorrect()
+    }), { questField: 'drawingCount' }));
   };
 
   // 標記字卡已記住 / 待複習
   const toggleFlashcardMastered = (wordId) => {
-    setState(prev => {
-      const ensured = ensureTodayQuests(prev);
-      soundEffects.playBubble();
+    setState(prev => recordEvent(prev, (ensured) => {
       const list = ensured.flashcardMastered || [];
       const isMastered = list.includes(wordId);
-      const updatedList = isMastered ? list.filter(id => id !== wordId) : [...list, wordId];
-      const newStars = !isMastered ? ensured.stars + 1 : ensured.stars;
-      const updatedQuests = {
-        ...ensured.dailyQuests,
-        flashcardCount: (ensured.dailyQuests.flashcardCount || 0) + 1
+      return {
+        patch: { flashcardMastered: isMastered ? list.filter(id => id !== wordId) : [...list, wordId] },
+        stars: isMastered ? 0 : 1,
+        sound: () => soundEffects.playBubble()
       };
-      const updated = {
-        ...ensured,
-        stars: newStars,
-        flashcardMastered: updatedList,
-        dailyQuests: updatedQuests
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
+    }, { questField: 'flashcardCount' }));
   };
 
-  // 標記單字完成
+  // 標記單字完成（只在第一次完成時發放星星與音效）
   const markWordCompleted = (wordId, earnStars = 1) => {
-    setState(prev => {
-      const ensured = ensureTodayQuests(prev);
-      const isNew = !ensured.completedWords.includes(wordId);
-      const newCompleted = isNew ? [...ensured.completedWords, wordId] : ensured.completedWords;
-      const newStars = isNew ? ensured.stars + earnStars : ensured.stars;
-      if (isNew) soundEffects.playStarWin();
-      const updated = {
-        ...ensured,
-        completedWords: newCompleted,
-        stars: newStars
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
+    setState(prev => recordCompletion(prev, 'completedWords', wordId, {
+      stars: earnStars,
+      sound: (isNew) => { if (isNew) soundEffects.playStarWin(); }
+    }));
   };
 
-  // 標記句子朗讀完成
+  // 標記句子朗讀完成（只在第一次完成時發放星星；音效維持每次朗讀都播放的既有行為）
   const markSentenceCompleted = (sentenceId, earnedStars = 2) => {
-    setState(prev => {
-      const ensured = ensureTodayQuests(prev);
-      const isNew = !ensured.completedSentences.includes(sentenceId);
-      const newCompleted = isNew ? [...ensured.completedSentences, sentenceId] : ensured.completedSentences;
-      const newStars = ensured.stars + earnedStars;
-      soundEffects.playStarWin();
-      const updatedQuests = {
-        ...ensured.dailyQuests,
-        sentenceCount: (ensured.dailyQuests.sentenceCount || 0) + 1
-      };
-      const updated = {
-        ...ensured,
-        completedSentences: newCompleted,
-        stars: newStars,
-        dailyQuests: updatedQuests
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
+    setState(prev => recordCompletion(prev, 'completedSentences', sentenceId, {
+      stars: earnedStars,
+      questField: 'sentenceCount',
+      sound: () => soundEffects.playStarWin()
+    }));
   };
 
-  // 標記新聞朗讀完成
+  // 標記新聞朗讀完成（只在第一次完成時發放星星；音效維持每次朗讀都播放的既有行為）
   const markNewsCompleted = (newsId, earnedStars = 2) => {
-    setState(prev => {
-      const ensured = ensureTodayQuests(prev);
-      const isNew = !ensured.completedNews?.includes(newsId);
-      const newCompleted = isNew ? [...(ensured.completedNews || []), newsId] : ensured.completedNews;
-      const newStars = ensured.stars + earnedStars;
-      soundEffects.playStarWin();
-      const updatedQuests = {
-        ...ensured.dailyQuests,
-        sentenceCount: (ensured.dailyQuests.sentenceCount || 0) + 1
-      };
-      const updated = {
-        ...ensured,
-        completedNews: newCompleted,
-        stars: newStars,
-        dailyQuests: updatedQuests
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
+    setState(prev => recordCompletion(prev, 'completedNews', newsId, {
+      stars: earnedStars,
+      questField: 'sentenceCount',
+      sound: () => soundEffects.playStarWin()
+    }));
   };
 
   // 記錄拼字遊戲勝利
   const recordSpellingWin = (earnedStars = 2) => {
-    setState(prev => {
-      const ensured = ensureTodayQuests(prev);
-      const updated = {
-        ...ensured,
-        stars: ensured.stars + earnedStars,
-        spellingWinCount: ensured.spellingWinCount + 1
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
+    setState(prev => recordEvent(prev, (ensured) => ({
+      patch: { spellingWinCount: ensured.spellingWinCount + 1 },
+      stars: earnedStars
+    })));
   };
 
   // 記錄每日測驗完成
   const recordQuizCompleted = (earnedStars = 3) => {
-    setState(prev => {
-      const ensured = ensureTodayQuests(prev);
-      const updatedQuests = {
-        ...ensured.dailyQuests,
-        quizCount: (ensured.dailyQuests.quizCount || 0) + 1
-      };
-      const updated = {
-        ...ensured,
-        stars: ensured.stars + earnedStars,
-        quizCount: ensured.quizCount + 1,
-        dailyQuests: updatedQuests
-      };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
+    setState(prev => recordEvent(prev, (ensured) => ({
+      patch: { quizCount: ensured.quizCount + 1 },
+      stars: earnedStars
+    }), { questField: 'quizCount' }));
   };
 
   // 新增單一新聞
@@ -396,11 +363,11 @@ export function useLearningState() {
 
   // 增加星星
   const addStars = (count = 1) => {
-    soundEffects.playStarWin();
-    setState(prev => {
-      const updated = { ...prev, stars: prev.stars + count };
-      return checkBadges(triggerAutoCheckIn(updated));
-    });
+    setState(prev => recordEvent(prev, () => ({
+      patch: {},
+      stars: count,
+      sound: () => soundEffects.playStarWin()
+    })));
   };
 
   // 更新設定
