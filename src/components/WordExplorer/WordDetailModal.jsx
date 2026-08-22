@@ -12,7 +12,8 @@ export default function WordDetailModal({
   isOpen,
   onClose,
   isCompleted = false,
-  onMarkLearned
+  onMarkLearned,
+  bopomofoScale = 'large'
 }) {
   const {
     isPlaying,
@@ -60,6 +61,7 @@ export default function WordDetailModal({
                 char={charObj.char}
                 bopomofo={charObj.bopomofo}
                 size="lg"
+                annotationScale={bopomofoScale}
                 highlight={idx === selectedCharIdx}
               />
             ))}

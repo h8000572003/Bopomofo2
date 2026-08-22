@@ -9,7 +9,8 @@ export default function SentenceKaraokeView({
   completedSentences = [],
   customTopics = [],
   onSentenceLearned,
-  speechRate = 0.8
+  speechRate = 0.8,
+  bopomofoScale = 'large'
 }) {
   const allTopics = [...TOPICS, ...customTopics];
   const [selectedTopicId, setSelectedTopicId] = useState(allTopics[0]?.id || 'animals');
@@ -91,6 +92,7 @@ export default function SentenceKaraokeView({
               isCompleted={completedSentences.includes(sentence.id)}
               onSentenceLearned={onSentenceLearned}
               speechRate={speechRate}
+              bopomofoScale={bopomofoScale}
             />
           ))}
         </div>

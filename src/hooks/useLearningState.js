@@ -44,6 +44,7 @@ const defaultState = {
     isMuted: false,
     theme: 'sunny',
     badgeDifficulty: 'easy', // 'easy' (1x) | 'medium' (2x) | 'hard' (4x)
+    bopomofoScale: 'large', // 'normal' (標準) | 'large' (大) | 'xlarge' (特大)
   }
 };
 

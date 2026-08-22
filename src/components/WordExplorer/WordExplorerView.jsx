@@ -11,7 +11,8 @@ export default function WordExplorerView({
   completedWords = [],
   customTopics = [],
   onMarkLearned,
-  speechRate = 0.85
+  speechRate = 0.85,
+  bopomofoScale = 'large'
 }) {
   const allTopics = [...TOPICS, ...customTopics];
   const [selectedTopicId, setSelectedTopicId] = useState(allTopics[0]?.id || 'animals');
@@ -111,6 +112,7 @@ export default function WordExplorerView({
               isCompleted={completedWords.includes(word.id)}
               onSelect={setActiveWord}
               onPlayQuickAudio={handleQuickAudio}
+              bopomofoScale={bopomofoScale}
             />
           ))}
         </div>
@@ -123,6 +125,7 @@ export default function WordExplorerView({
         onClose={() => setActiveWord(null)}
         isCompleted={activeWord ? completedWords.includes(activeWord.id) : false}
         onMarkLearned={onMarkLearned}
+        bopomofoScale={bopomofoScale}
       />
     </div>
   );

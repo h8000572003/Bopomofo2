@@ -8,7 +8,8 @@ import { speechHelper } from '../../utils/speechHelper';
 export default function CustomNewsImporter({
   isOpen,
   onClose,
-  onImportNews
+  onImportNews,
+  bopomofoScale = 'large'
 }) {
   const [inputText, setInputText] = useState('');
   const [newsTitle, setNewsTitle] = useState('');
@@ -184,6 +185,7 @@ export default function CustomNewsImporter({
                     char={t.char}
                     bopomofo={t.bopomofo}
                     size="md"
+                    annotationScale={bopomofoScale}
                   />
                 ))}
               </div>

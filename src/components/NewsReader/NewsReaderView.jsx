@@ -12,7 +12,8 @@ export default function NewsReaderView({
   onNewsCompleted,
   onAddNewsItem,
   onBatchAddNews,
-  speechRate = 0.8
+  speechRate = 0.8,
+  bopomofoScale = 'large'
 }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isImporterOpen, setIsImporterOpen] = useState(false);
@@ -136,6 +137,7 @@ export default function NewsReaderView({
                 isCompleted={completedNews.includes(article.id)}
                 onSentenceLearned={onNewsCompleted}
                 speechRate={speechRate}
+                bopomofoScale={bopomofoScale}
               />
             </div>
           ))}
@@ -147,6 +149,7 @@ export default function NewsReaderView({
         isOpen={isImporterOpen}
         onClose={() => setIsImporterOpen(false)}
         onImportNews={onAddNewsItem}
+        bopomofoScale={bopomofoScale}
       />
     </div>
   );

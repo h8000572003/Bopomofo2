@@ -113,3 +113,15 @@ Bopomofo/
 2. **樣式規範**：採用 Tailwind CSS 工具類別，維持語意化與色彩一致性。
 3. **中文註解**：程式碼註解一律採用台灣繁體中文，詳細記錄核心演算法與業務邏輯。
 4. **狀態持久化**：所有學習歷程（星星、成就、打卡天數、每日任務、榮耀次數）均自動持久化於瀏覽器 `localStorage`。
+
+---
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as GitHub issues on `h8000572003/Bopomofo2`, managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context layout — `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.

@@ -320,6 +320,51 @@ export default function SettingsModal({
               </div>
             </div>
 
+            {/* 注音字級設定 */}
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-black text-gray-700 flex items-center gap-1">
+                  <span>🔤 注音字級：</span>
+                  <span className="text-amber-600 font-bold">
+                    {settings.bopomofoScale === 'xlarge' ? '特大' : settings.bopomofoScale === 'normal' ? '標準' : '大'}
+                  </span>
+                </label>
+              </div>
+              <p className="text-[11px] text-gray-500 font-medium mb-3">
+                調整漢字旁注音符號（聲母、介音、韻母、聲調）的顯示大小，方便孩子看得更清楚，不影響漢字本身大小。
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: 'normal', label: '標準', sub: '原始大小', color: 'from-sky-400 to-blue-500' },
+                  { id: 'large', label: '大', sub: '建議大小', color: 'from-amber-400 to-orange-500' },
+                  { id: 'xlarge', label: '特大', sub: '最大顯示', color: 'from-rose-400 to-red-500' },
+                ].map(item => {
+                  const isCurrent = (settings.bopomofoScale || 'large') === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        soundEffects.playBubble();
+                        onUpdateSettings({ bopomofoScale: item.id });
+                        showToast(`✨ 注音字級已切換為：${item.label}`);
+                      }}
+                      className={`p-2.5 rounded-xl border text-center transition ${
+                        isCurrent
+                          ? `bg-gradient-to-r ${item.color} text-white font-black shadow-md border-transparent ring-2 ring-amber-300`
+                          : 'bg-white text-gray-700 border-gray-200 hover:bg-amber-50/60 font-bold'
+                      }`}
+                    >
+                      <span className="text-xs block">{item.label}</span>
+                      <span className={`text-[10px] block mt-0.5 ${isCurrent ? 'text-white/80' : 'text-gray-400'}`}>
+                        {item.sub}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* 音效開關 */}
             <div className="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-200">
               <span className="text-xs font-black text-gray-700">遊戲音效與鼓勵音樂</span>

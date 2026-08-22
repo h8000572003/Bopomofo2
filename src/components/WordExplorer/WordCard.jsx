@@ -7,7 +7,8 @@ export default function WordCard({
   word,
   isCompleted = false,
   onSelect,
-  onPlayQuickAudio
+  onPlayQuickAudio,
+  bopomofoScale = 'large'
 }) {
   return (
     <div
@@ -42,6 +43,7 @@ export default function WordCard({
             char={charObj.char}
             bopomofo={charObj.bopomofo}
             size="md"
+            annotationScale={bopomofoScale}
           />
         ))}
       </div>

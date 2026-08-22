@@ -9,7 +9,8 @@ export default function KaraokePlayer({
   sentence,
   isCompleted = false,
   onSentenceLearned,
-  speechRate = 0.8
+  speechRate = 0.8,
+  bopomofoScale = 'large'
 }) {
   const {
     isPlaying,
@@ -86,6 +87,7 @@ export default function KaraokePlayer({
               char={token.char}
               bopomofo={token.bopomofo}
               size="lg"
+              annotationScale={bopomofoScale}
               highlight={isHighlighted}
               className={isHighlighted ? 'scale-125 transition-transform duration-150' : ''}
             />

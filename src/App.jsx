@@ -80,6 +80,7 @@ export default function App() {
             masteredWords={state.flashcardMastered}
             onToggleMastered={toggleFlashcardMastered}
             speechRate={state.settings.speechRate}
+            bopomofoScale={state.settings.bopomofoScale}
           />
         )}
 
@@ -90,6 +91,7 @@ export default function App() {
             customTopics={state.customTopics}
             onMarkLearned={markWordCompleted}
             speechRate={state.settings.speechRate}
+            bopomofoScale={state.settings.bopomofoScale}
           />
         )}
 
@@ -100,6 +102,7 @@ export default function App() {
             customTopics={state.customTopics}
             onSentenceLearned={markSentenceCompleted}
             speechRate={state.settings.speechRate}
+            bopomofoScale={state.settings.bopomofoScale}
           />
         )}
 
@@ -112,6 +115,7 @@ export default function App() {
             onAddNewsItem={addNewsItem}
             onBatchAddNews={batchAddNews}
             speechRate={state.settings.speechRate}
+            bopomofoScale={state.settings.bopomofoScale}
           />
         )}
 
